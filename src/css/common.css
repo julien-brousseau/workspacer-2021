@@ -10,7 +10,6 @@ body {
   margin: 0px;
   padding: 0px;
   width: 500px;
-  min-height: 100%;
   color: var(--text-color);
 }
 
@@ -24,6 +23,10 @@ h1 {
 h2 {
   font-size: 18px;
   display: inline;
+}
+
+form {
+  padding: 15px;
 }
 
 /* Container */

@@ -57,6 +57,8 @@ const Logic = {
   },
 };
 
+// SECTIONS
+
 Logic.registerSection('workspaces', {
   sectionId: 'container-workspaces',
   preset() {
@@ -126,6 +128,13 @@ Logic.registerSection('workspace-form', {
   sectionId: 'container-workspace-form',
   preset() {
     document.getElementById('workspace-form-back-button').addEventListener('click', () => { 
+      Logic.showSection('workspaces'); 
+    });
+    document.getElementById('workspace-form-submit-button').addEventListener('submit', async event => { 
+      event.preventDefault();
+      if (!event.target.elements[0].value) return;
+      const workspace = { title: event.target.elements[0].value };
+      await browser.runtime.sendMessage({ type: 'CREATE_WORKSPACE', workspace }); 
       Logic.showSection('workspaces'); 
     });
   },
