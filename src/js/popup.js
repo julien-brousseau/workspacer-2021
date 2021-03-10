@@ -30,12 +30,11 @@ const Logic = {
     await this.refreshWorkspaces();
 
     // Set or remove current workspace data
-    console.log('object :>> ', wsId);
     this._currentWorkspace = wsId ? this.workspace(wsId) : null;
 
-    // Set and build current section
+    // Set and render current section
     const section = this._sections[sectionName];
-    await section.build();
+    await section.render();
     
     // Hide all sections
     Object.keys(this._sections).forEach(k => {
@@ -53,7 +52,7 @@ const Logic = {
   // 
   registerSection(name, section) {
     this._sections[name] = section;
-    section.preset();
+    section.init();
   },
 };
 
@@ -61,33 +60,46 @@ const Logic = {
 
 Logic.registerSection('workspaces', {
   sectionId: 'container-workspaces',
-  preset() {
+  init() {
     document.getElementById('settings-button').addEventListener('click', () => { 
       Logic.showSection('settings'); 
     });
     document.getElementById('new-workspace-button').addEventListener('click', () => { 
       Logic.showSection('workspace-form'); 
     });
-    // document.getElementById('delete-all-workspaces-button').addEventListener('click', () => { 
-    //   browser.runtime.sendMessage({ type: 'DELETE_ALL_WORKSPACES' }); 
-    // });
   },
-  async build() {
+  async render() {
     const fragment = document.createDocumentFragment();
     Logic.workspaces().forEach(workspace => {
 
       const div = document.createElement('div');
       div.classList.add('item', 'clickable');
 
+      // Add tab to workspace button
+      const button = document.createElement('button');
+      button.classList.add('ui', 'tiny', 'basic', 'secondary', 'icon', 'button', 'right', 'floated');
+      button.innerHTML = '<i class="plus icon"></i>';
+      button.addEventListener('click', async event => { 
+        event.stopPropagation();
+        const blop = await browser.runtime.sendMessage({ type: 'ADD_CURRENT_TAB_TO_WORKSPACE', workspace }); 
+        console.log('blop :>> ', blop);
+        Logic.showSection('workspaces'); 
+      });
+
+      div.appendChild(button);
+
+      // Tab count label
       const tag = document.createElement('div');
-      tag.classList.add('ui', 'tiny', 'secondary', 'horizontal', 'label', 'right', 'floated');
+      tag.classList.add('ui', 'tiny', 'secondary', 'horizontal', 'label');
       tag.innerHTML = workspace.tabs.length;
       div.appendChild(tag);
 
+      // Workspace title
       const title = document.createElement('h2');
       title.innerHTML = workspace.title;
       div.appendChild(title);
 
+      // Main click event
       div.addEventListener('click', () => { 
         Logic.showSection('workspace', workspace.id); 
       });
@@ -102,12 +114,12 @@ Logic.registerSection('workspaces', {
 
 Logic.registerSection('workspace', {
   sectionId: 'container-workspace',
-  preset() {
+  init() {
     document.getElementById('workspace-back-button').addEventListener('click', () => { 
       Logic.showSection('workspaces'); 
     });
   },
-  async build() {
+  async render() {
     const fragment = document.createDocumentFragment();
     const workspace = Logic.currentWorkspace();
 
@@ -126,7 +138,7 @@ Logic.registerSection('workspace', {
 
 Logic.registerSection('workspace-form', {
   sectionId: 'container-workspace-form',
-  preset() {
+  init() {
     document.getElementById('workspace-form-back-button').addEventListener('click', () => { 
       Logic.showSection('workspaces'); 
     });
@@ -138,17 +150,21 @@ Logic.registerSection('workspace-form', {
       Logic.showSection('workspaces'); 
     });
   },
-  async build() {}
+  async render() {}
 });
 
 Logic.registerSection('settings', {
   sectionId: 'container-settings',
-  preset() {
+  init() {
     document.getElementById('settings-back-button').addEventListener('click', () => { 
       Logic.showSection('workspaces'); 
     });
+    document.getElementById('delete-all-workspaces-button').addEventListener('click', async () => { 
+      await browser.runtime.sendMessage({ type: 'DELETE_ALL_WORKSPACES' }); 
+      Logic.showSection('workspaces'); 
+    });
   },
-  async build() {}
+  async render() {}
 });
 
 Logic.init();

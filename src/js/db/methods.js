@@ -32,15 +32,25 @@ export const fetchOneWorkspace = async (id) => {
     from: TABS_TABLE,
     where: { wsId: id },
   });
-  return { workspace: { ...workspace[0], tabs } };
+  return { ...workspace[0], tabs };
 };
 
-export const createWorkspace = async (ws) => {
+export const createOrUpdateTab = async (tab) => {
+  const insertedTabs = await connection.insert({
+    into: TABS_TABLE,
+    values: [tab],
+    return: true,
+    upsert: true,
+  });
+  return insertedTabs[0];
+};
+
+export const createOrUpdateWorkspace = async (ws) => {
   const workspace = await connection.insert({
     into: WORKSPACES_TABLE,
     values: [ws],
     return: true,
-    // upsert: true,
+    upsert: true,
   });
   return workspace[0];
 };

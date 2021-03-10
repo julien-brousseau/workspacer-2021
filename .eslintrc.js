@@ -6,6 +6,7 @@ module.exports = {
     es2020: true,
     webextensions: true,
   },
+  plugins: ['html'],
   extends: ['eslint:recommended'],
   parserOptions: {
     sourceType: 'module',
