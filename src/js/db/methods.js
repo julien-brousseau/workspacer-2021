@@ -22,19 +22,6 @@ export const fetchAll = async () => {
   return workspaces.map(w => ({ ...w, tabs: tabs.filter(t => t.wsId == w.id) }));
 };
 
-export const fetchOneWorkspace = async (id) => {
-  const workspace = await connection.select({
-    from: WORKSPACES_TABLE,
-    where: { id },
-    limit: 1,
-  });
-  const tabs = await connection.select({
-    from: TABS_TABLE,
-    where: { wsId: id },
-  });
-  return { ...workspace[0], tabs };
-};
-
 export const createOrUpdateTab = async (tab) => {
   const insertedTabs = await connection.insert({
     into: TABS_TABLE,
@@ -60,3 +47,16 @@ export const deleteEverything = async () => {
   await connection.clear(TABS_TABLE);
   return true;
 };
+
+// export const fetchOneWorkspace = async (id) => {
+//   const workspace = await connection.select({
+//     from: WORKSPACES_TABLE,
+//     where: { id },
+//     limit: 1,
+//   });
+//   const tabs = await connection.select({
+//     from: TABS_TABLE,
+//     where: { wsId: id },
+//   });
+//   return { ...workspace[0], tabs };
+// };

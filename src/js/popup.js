@@ -19,8 +19,12 @@ const Logic = {
 
   // Fetch workspace data from backend
   async refreshWorkspaces(){
-    this._workspaces = await browser.runtime.sendMessage({ type: 'FETCH_ALL_WORKSPACES' }); 
-    return;
+    return browser.runtime.sendMessage({ type: 'FETCH_ALL_WORKSPACES' })
+      .then(workspaces => {
+        this._workspaces = workspaces;
+        return;
+      })
+      .catch(e => console.log('e :>> ', e)); 
   },
 
   // Refresh data and process section 
@@ -71,22 +75,31 @@ Logic.registerSection('workspaces', {
   async render() {
     const fragment = document.createDocumentFragment();
     Logic.workspaces().forEach(workspace => {
-
       const div = document.createElement('div');
       div.classList.add('item', 'clickable');
 
-      // Add tab to workspace button
-      const button = document.createElement('button');
-      button.classList.add('ui', 'tiny', 'basic', 'secondary', 'icon', 'button', 'right', 'floated');
-      button.innerHTML = '<i class="plus icon"></i>';
-      button.addEventListener('click', async event => { 
+      // Add 'open in new window' button
+      const button_open = document.createElement('button');
+      button_open.classList.add('ui', 'tiny', 'basic', 'green', 'icon', 'button', 'right', 'floated');
+      button_open.innerHTML = '<i class="external alternate icon"></i>';
+      button_open.title = 'Open in new window';
+      button_open.addEventListener('click', event => { 
         event.stopPropagation();
-        const blop = await browser.runtime.sendMessage({ type: 'ADD_CURRENT_TAB_TO_WORKSPACE', workspace }); 
-        console.log('blop :>> ', blop);
+        browser.runtime.sendMessage({ type: 'OPEN_WORKSPACE_IN_NEW_WINDOW', tabs: workspace.tabs });
+      });
+      div.appendChild(button_open);
+
+      // Add 'add tab to workspace' button
+      const button_add = document.createElement('button');
+      button_add.classList.add('ui', 'tiny', 'basic', 'secondary', 'icon', 'button', 'right', 'floated');
+      button_add.innerHTML = '<i class="plus icon"></i>';
+      button_add.title = 'Add current tab';
+      button_add.addEventListener('click', async event => { 
+        event.stopPropagation();
+        await browser.runtime.sendMessage({ type: 'ADD_CURRENT_TAB_TO_WORKSPACE', workspace });
         Logic.showSection('workspaces'); 
       });
-
-      div.appendChild(button);
+      div.appendChild(button_add);
 
       // Tab count label
       const tag = document.createElement('div');
