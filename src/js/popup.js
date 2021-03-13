@@ -1,3 +1,4 @@
+// Main 
 const Logic = {
   _sections: {},
   _workspaces: [],
@@ -24,7 +25,7 @@ const Logic = {
         this._workspaces = workspaces;
         return;
       })
-      .catch(e => console.log('e :>> ', e)); 
+      .catch(e => console.log('Error > refreshWorkspaces >> ', e)); 
   },
 
   // Refresh data and process section 
@@ -53,14 +54,24 @@ const Logic = {
     sectionSelector.classList.remove('hide');
   },
 
-  // 
+  // Pre-build and init section
   registerSection(name, section) {
     this._sections[name] = section;
     section.init();
   },
 };
 
-// SECTIONS
+// -------------------------------------------------------------------------
+// Helpers
+
+function removeListeners(id) {
+  const node = document.getElementById(id);
+  const clone = node.cloneNode(true);
+  node.parentNode.replaceChild(clone, node);
+}
+
+// -------------------------------------------------------------------------
+// Sections
 
 Logic.registerSection('workspaces', {
   sectionId: 'container-workspaces',
@@ -85,7 +96,7 @@ Logic.registerSection('workspaces', {
       button_open.title = 'Open in new window';
       button_open.addEventListener('click', event => { 
         event.stopPropagation();
-        browser.runtime.sendMessage({ type: 'OPEN_WORKSPACE_IN_NEW_WINDOW', tabs: workspace.tabs });
+        browser.runtime.sendMessage({ type: 'OPEN_WORKSPACE', tabs: workspace.tabs });
       });
       div.appendChild(button_open);
 
@@ -136,6 +147,25 @@ Logic.registerSection('workspace', {
     const fragment = document.createDocumentFragment();
     const workspace = Logic.currentWorkspace();
 
+    // Buttons
+    removeListeners('workspace-add-current-tab-button');
+    document.getElementById('workspace-add-current-tab-button').addEventListener('click', async () => { 
+      await browser.runtime.sendMessage({ type: 'ADD_CURRENT_TAB_TO_WORKSPACE', workspace });
+      Logic.showSection('workspace', workspace.id); 
+    });
+    removeListeners('workspace-add-all-tabs-button');
+    document.getElementById('workspace-add-all-tabs-button').addEventListener('click', async () => { 
+      await browser.runtime.sendMessage({ type: 'ADD_CURRENT_WINDOW_TO_WORKSPACE', workspace });
+      Logic.showSection('workspace', workspace.id); 
+    });
+    document.getElementById('workspace-open-in-new-window-button').addEventListener('click', () => { 
+      browser.runtime.sendMessage({ type: 'OPEN_WORKSPACE', tabs: workspace.tabs });
+    });
+    document.getElementById('workspace-open-in-current-window-button').addEventListener('click', () => { 
+      browser.runtime.sendMessage({ type: 'OPEN_WORKSPACE', currentWindow: true, tabs: workspace.tabs });
+    });
+
+    // Tab list
     workspace.tabs.forEach(tab => {
       const div = document.createElement('div');
       div.classList.add('item');
@@ -144,8 +174,8 @@ Logic.registerSection('workspace', {
       fragment.appendChild(div);
     });
 
-    document.getElementById('container-workspace-content').innerHTML = '';
-    document.getElementById('container-workspace-content').appendChild(fragment);
+    document.getElementById('container-workspace-tablist').innerHTML = '';
+    document.getElementById('container-workspace-tablist').appendChild(fragment);
   }
 });
 

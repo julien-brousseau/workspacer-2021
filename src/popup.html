@@ -26,7 +26,30 @@
           <button id="workspace-back-button" class="ui secondary button right floated">Back</button>
         </h1>
       </div>
-      <div id="container-workspace-content"></div>
+      <div id="container-workspace-controls">
+        <div class="ui compact menu">
+          <div class="ui simple dropdown item">
+            Add tab
+            <i class="dropdown icon"></i>
+            <div class="menu">
+              <div id="workspace-add-current-tab-button" class="item">Curren tab</div>
+              <div id="workspace-add-all-tabs-button" class="item">All tabs from window</div>
+            </div>
+          </div>
+        </div>
+        <div class="ui compact menu">
+          <div class="ui simple dropdown item">
+            Open
+            <i class="dropdown icon"></i>
+            <div class="menu">
+              <div id="workspace-open-in-new-window-button" class="item">In a new window</div>
+              <div id="workspace-open-in-current-window-button" class="item">Replace current window</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <hr />
+      <div id="container-workspace-tablist"></div>
     </div>
 
     <div id="container-workspace-form" class="container hide">

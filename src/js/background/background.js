@@ -11,10 +11,15 @@ async function handleMessageFromBackground(action) {
   }
   else if (action.type === 'ADD_CURRENT_TAB_TO_WORKSPACE') {
     const tab = await fetchActiveTab();
-    return tab ? await db.createOrUpdateTab({ ...tab, wsId: action.workspace.id }) : false;
+    return tab ? await db.createOrUpdateTabs([{ ...tab, wsId: action.workspace.id }]) : false;
   }
-  else if (action.type === 'OPEN_WORKSPACE_IN_NEW_WINDOW') {
-    openTabsInWindow(action.tabs);
+  else if (action.type === 'ADD_CURRENT_WINDOW_TO_WORKSPACE') {
+    const tabs = await fetchAllTabsFromWindow();
+    return await db.createOrUpdateTabs(tabs.map(t => ({ ...t, wsId: action.workspace.id })));
+  }
+  else if (action.type === 'OPEN_WORKSPACE') {
+    const { currentWindow, tabs } = action;
+    openTabsInWindow(tabs, currentWindow);
   }
   else if (action.type === 'CREATE_WORKSPACE') {
     return await db.createOrUpdateWorkspace(action.workspace);
@@ -36,12 +41,26 @@ async function fetchActiveTab () {
         console.log('Warning: Pages using about: protocol cannot be saved in workspaces');
         return false;
       }
-      // Filter relevant properties
-      const props = ['title', 'url', 'pinned', 'discarded', 'favIconUrl'];
-      return props.reduce((obj, key) => ({ ...obj, [key]: tab[key] }), {});
+      return filterRawTab(tab);
     })
-    .catch(e => 'fetchActiveTab >> ' + e);
+    .catch(e => 'Error > fetchActiveTab >> ' + e);
 }
+
+// Fetch all tabs from the current window
+async function fetchAllTabsFromWindow () {
+  return browser.tabs.query({ currentWindow: true })
+    .then(tabs => tabs
+      .filter(t => t.url.slice(0, 6) !== 'about:')
+      .map(t => filterRawTab(t)))
+    .catch(e => console.log('Error > fetchAllTabsFromWindow :>> ', e));
+}
+
+// Filter out un-necessary props from a raw tab object
+function filterRawTab(tab) {
+  const props = ['title', 'url', 'pinned', 'discarded', 'favIconUrl'];
+  return props.reduce((filteredProps, prop) => ({ ...filteredProps, [prop]: tab[prop] }), {});
+}
+
 
 // Query browser to create a new window containing [tabs]
 async function openTabsInWindow (tabs, currentWindow = false) {

@@ -22,10 +22,10 @@ export const fetchAll = async () => {
   return workspaces.map(w => ({ ...w, tabs: tabs.filter(t => t.wsId == w.id) }));
 };
 
-export const createOrUpdateTab = async (tab) => {
+export const createOrUpdateTabs = async (tabs) => {
   const insertedTabs = await connection.insert({
     into: TABS_TABLE,
-    values: [tab],
+    values: tabs,
     return: true,
     upsert: true,
   });
