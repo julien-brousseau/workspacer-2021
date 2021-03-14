@@ -159,14 +159,27 @@ Logic.registerSection('workspace', {
       await browser.runtime.sendMessage({ type: 'ADD_CURRENT_WINDOW_TO_WORKSPACE', workspace });
       Logic.showSection('workspace', workspace.id); 
     });
+    removeListeners('workspace-open-in-new-window-button');
     document.getElementById('workspace-open-in-new-window-button').addEventListener('click', () => { 
       browser.runtime.sendMessage({ type: 'OPEN_WORKSPACE', tabs: workspace.tabs });
     });
+    removeListeners('workspace-open-in-current-window-button');
     document.getElementById('workspace-open-in-current-window-button').addEventListener('click', () => { 
       browser.runtime.sendMessage({ type: 'OPEN_WORKSPACE', currentWindow: true, tabs: workspace.tabs });
     });
+    removeListeners('workspace-rename-button');
     document.getElementById('workspace-rename-button').addEventListener('click', () => { 
       Logic.showSection('workspace-form', workspace.id); 
+    });
+    removeListeners('workspace-delete-tabs-button');
+    document.getElementById('workspace-delete-tabs-button').addEventListener('click', async () => { 
+      await browser.runtime.sendMessage({ type: 'DELETE_TABS_BY_WORKSPACE', workspace });
+      Logic.showSection('workspace', workspace.id); 
+    });
+    removeListeners('workspace-delete-button');
+    document.getElementById('workspace-delete-button').addEventListener('click', async () => { 
+      await browser.runtime.sendMessage({ type: 'DELETE_WORKSPACE', workspace });
+      Logic.showSection('workspaces'); 
     });
 
     // Tab list
