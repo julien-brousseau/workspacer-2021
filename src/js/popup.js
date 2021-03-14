@@ -35,7 +35,8 @@ const Logic = {
     await this.refreshWorkspaces();
 
     // Set or remove current workspace data
-    this._currentWorkspace = wsId ? this.workspace(wsId) : null;
+    this._currentWorkspace = null;
+    if (wsId) this._currentWorkspace = this.workspace(wsId);
 
     // Set and render current section
     const section = this._sections[sectionName];
@@ -164,6 +165,9 @@ Logic.registerSection('workspace', {
     document.getElementById('workspace-open-in-current-window-button').addEventListener('click', () => { 
       browser.runtime.sendMessage({ type: 'OPEN_WORKSPACE', currentWindow: true, tabs: workspace.tabs });
     });
+    document.getElementById('workspace-rename-button').addEventListener('click', () => { 
+      Logic.showSection('workspace-form', workspace.id); 
+    });
 
     // Tab list
     workspace.tabs.forEach(tab => {
@@ -185,15 +189,23 @@ Logic.registerSection('workspace-form', {
     document.getElementById('workspace-form-back-button').addEventListener('click', () => { 
       Logic.showSection('workspaces'); 
     });
+  },
+  async render() {
+    const workspace = Logic.currentWorkspace() || {};
+    
+    // Fields
+    document.getElementById('workspace-form-title').value = workspace.id ? workspace.title : '';
+    
+    // Submit button
+    removeListeners('workspace-form-submit-button');
+    document.getElementById('workspace-submit-button').innerHTML = workspace.id ? 'Save' : 'Create';
     document.getElementById('workspace-form-submit-button').addEventListener('submit', async event => { 
       event.preventDefault();
       if (!event.target.elements[0].value) return;
-      const workspace = { title: event.target.elements[0].value };
-      await browser.runtime.sendMessage({ type: 'CREATE_WORKSPACE', workspace }); 
+      await browser.runtime.sendMessage({ type: 'CREATE_OR_EDIT_WORKSPACE', workspace: { ...workspace, title: event.target.elements[0].value } }); 
       Logic.showSection('workspaces'); 
     });
-  },
-  async render() {}
+  }
 });
 
 Logic.registerSection('settings', {

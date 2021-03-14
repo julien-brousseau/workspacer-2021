@@ -26,7 +26,7 @@
           <button id="workspace-back-button" class="ui secondary button right floated">Back</button>
         </h1>
       </div>
-      <div id="container-workspace-controls">
+      <div id="container-workspace-controls" style="padding: 10px;">
         <div class="ui compact menu">
           <div class="ui simple dropdown item">
             Add tab
@@ -47,6 +47,17 @@
             </div>
           </div>
         </div>
+        <div class="ui compact menu">
+          <div class="ui simple dropdown item">
+            Options
+            <i class="dropdown icon"></i>
+            <div class="menu">
+              <div id="workspace-rename-button" class="item">Rename</div>
+              <div id="workspace-delete-tabs-button" class="item">Delete all tabs</div>
+              <div id="workspace-delete-button" class="item">Delete workspace</div>
+            </div>
+          </div>
+        </div>
       </div>
       <hr />
       <div id="container-workspace-tablist"></div>
@@ -63,9 +74,9 @@
         <form id="workspace-form-submit-button" class="ui form basic">
           <div class="field">
             <label>Workspace name</label>
-            <input name="title" type="text" placeholder="Ex: School">
+            <input id="workspace-form-title" name="title" type="text" placeholder="Ex: School">
           </div>
-          <button class="ui primary button" type="submit">Create</button>
+          <button id="workspace-submit-button" class="ui primary button" type="submit">Create</button>
         </form>
       </div>
     </div>

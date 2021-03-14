@@ -21,7 +21,7 @@ async function handleMessageFromBackground(action) {
     const { currentWindow, tabs } = action;
     openTabsInWindow(tabs, currentWindow);
   }
-  else if (action.type === 'CREATE_WORKSPACE') {
+  else if (action.type === 'CREATE_OR_EDIT_WORKSPACE') {
     return await db.createOrUpdateWorkspace(action.workspace);
   }
   else if (action.type === 'DELETE_ALL_WORKSPACES') {
