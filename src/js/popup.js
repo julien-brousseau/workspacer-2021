@@ -3,6 +3,7 @@ const Logic = {
   _sections: {},
   _workspaces: [],
   _currentWorkspace: null,
+  _currentTab: null,
 
   async init() {
   },
@@ -36,6 +37,7 @@ const Logic = {
 
     // Set or remove current workspace data
     this._currentWorkspace = null;
+    this._currentTab = null;
     if (wsId) this._currentWorkspace = this.workspace(wsId);
 
     // Set and render current section
@@ -65,6 +67,7 @@ const Logic = {
 // -------------------------------------------------------------------------
 // Helpers
 
+// Clears all listeners from html element by replacing the node in DOM
 function removeListeners(id) {
   const node = document.getElementById(id);
   const clone = node.cloneNode(true);
@@ -237,3 +240,5 @@ Logic.registerSection('settings', {
 
 Logic.init();
 Logic.showSection('workspaces');
+
+$('.ui.dropdown').dropdown();

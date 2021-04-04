@@ -8,6 +8,7 @@
   </head>
     <body>
     
+    <!-- View all workspaces -->
     <div id="container-workspaces" class="container hide">
       <div id="container-workspaces-header">
         <h1>
@@ -19,6 +20,7 @@
       <div id="container-workspaces-content"></div>
     </div>
 
+    <!-- View a single workspace -->
     <div id="container-workspace" class="container hide">
       <div id="container-workspace-header">
         <h1>
@@ -27,42 +29,43 @@
         </h1>
       </div>
       <div id="container-workspace-controls" style="padding: 10px;">
-        <div class="ui compact menu">
-          <div class="ui simple dropdown item">
-            Add tab
-            <i class="dropdown icon"></i>
-            <div class="menu">
-              <div id="workspace-add-current-tab-button" class="item">Curren tab</div>
-              <div id="workspace-add-all-tabs-button" class="item">All tabs from window</div>
-            </div>
+        
+        <!-- Add tabs dropdown -->
+        <div class="ui primary button dropdown">
+          <div class="text">Add tab</div>
+          <i class="dropdown icon"></i>
+          <div class="menu">
+            <div class="item" id="workspace-add-current-tab-button" class="item">Curren tab</div>
+            <div class="item" id="workspace-add-all-tabs-button" class="item">All tabs from window</div>
           </div>
         </div>
-        <div class="ui compact menu">
-          <div class="ui simple dropdown item">
-            Open
-            <i class="dropdown icon"></i>
-            <div class="menu">
-              <div id="workspace-open-in-new-window-button" class="item">In a new window</div>
-              <div id="workspace-open-in-current-window-button" class="item">Replace current window</div>
-            </div>
+
+        <!-- Open tabs dropdown -->
+        <div class="ui primary button dropdown">
+          <div class="text">Open</div>
+          <i class="dropdown icon"></i>
+          <div class="menu">
+            <div class="item" id="workspace-open-in-new-window-button" class="item">In a new window</div>
+            <div class="item" id="workspace-open-in-current-window-button" class="item">Replace current window</div>
           </div>
         </div>
-        <div class="ui compact menu">
-          <div class="ui simple dropdown item">
-            Options
-            <i class="dropdown icon"></i>
-            <div class="menu">
-              <div id="workspace-rename-button" class="item">Rename</div>
-              <div id="workspace-delete-tabs-button" class="item">Delete all tabs</div>
-              <div id="workspace-delete-button" class="item">Delete workspace</div>
-            </div>
+        
+        <!-- Rename/Delete dropdown -->
+        <div class="ui primary button dropdown">
+          <div class="text">Options</div>
+          <i class="dropdown icon"></i>
+          <div class="menu">
+            <div class="item" id="workspace-rename-button" class="item">Rename</div>
+            <div class="item" id="workspace-delete-tabs-button" class="item">Delete all tabs</div>
+            <div class="item" id="workspace-delete-button" class="item">Delete workspace</div>
           </div>
         </div>
+
       </div>
-      <hr />
       <div id="container-workspace-tablist"></div>
     </div>
 
+    <!-- Workspace form for create/edit -->
     <div id="container-workspace-form" class="container hide">
       <div id="container-workspace-form-header">
         <h1>
@@ -81,6 +84,7 @@
       </div>
     </div>
 
+    <!-- App settings -->
     <div id="container-settings" class="container hide">
       <div id="container-settings-header">
         <h1>
@@ -93,6 +97,9 @@
       </div>
     </div>
 
+    <script src="js/lib/jquery-3.6.0.js"></script>
+    <script src="js/lib/semantic.min.js"></script>
     <script type="module" src="js/popup.js"></script>
+
   </body>
 </html>

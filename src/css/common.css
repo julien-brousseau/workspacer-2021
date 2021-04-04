@@ -49,3 +49,7 @@ form {
 .item.clickable:hover {
   background-color: var(--item-bg-color) !important;
 }
+
+#container-workspace-controls {
+  border-bottom: 1px solid #CCCCCC;
+}
