@@ -74,12 +74,35 @@
         </h1>
       </div>
       <div id="container-workspace-form-content">
-        <form id="workspace-form-submit-button" class="ui form basic">
+        <form id="workspace-form" class="ui form basic">
           <div class="field">
             <label>Workspace name</label>
             <input id="workspace-form-title" name="title" type="text" placeholder="Ex: School">
           </div>
           <button id="workspace-submit-button" class="ui primary button" type="submit">Create</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Tab form for edit -->
+    <div id="container-tab-form" class="container hide">
+      <div id="container-tab-form-header">
+        <h1>
+          Edit tab
+          <button id="tab-form-back-button" class="ui secondary button right floated">Back</button>
+        </h1>
+      </div>
+      <div id="container-tab-form-content">
+        <form id="tab-form" class="ui form basic" autocomplete="off">
+          <div class="field">
+            <label>Tab name</label>
+            <input id="tab-form-title" name="title" type="text" placeholder="Your favorite porn site">
+            <label>URL</label>
+            <input id="tab-form-url" name="url" type="text" placeholder="https://www.midgetporn.com">
+            <!-- <label>Workspace</label> -->
+            <!-- <input id="tab-form-wsId" name="wsId" type="text"> -->
+          </div>
+          <button id="tab-submit-button" class="ui primary button" type="submit">Save</button>
         </form>
       </div>
     </div>

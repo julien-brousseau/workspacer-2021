@@ -19,6 +19,16 @@ const Logic = {
     return this._currentWorkspace;
   },
 
+  tab(id) {
+    return this.workspaces()
+      .find(ws => ws.tabs.map(tab => tab.tabId).includes(id))
+      .tabs
+      .find(tab => tab.tabId === id);
+  },
+  currentTab() {
+    return this._currentTab;
+  },
+
   // Fetch workspace data from backend
   async refreshWorkspaces(){
     return browser.runtime.sendMessage({ type: 'FETCH_ALL_WORKSPACES' })
@@ -30,15 +40,25 @@ const Logic = {
   },
 
   // Refresh data and process section 
-  async showSection(sectionName, wsId = null) {
+  async showSection(sectionName, ids = {}) {
 
     // Reload workspaces from db
     await this.refreshWorkspaces();
 
     // Set or remove current workspace data
+    const { wsId, tabId } = ids;
     this._currentWorkspace = null;
     this._currentTab = null;
-    if (wsId) this._currentWorkspace = this.workspace(wsId);
+
+    if (wsId) {
+      this._currentWorkspace = this.workspace(wsId);
+    }
+
+    if (tabId) {
+      this._currentTab = this.tab(tabId);
+      // Current tab workspace has precedence over function param
+      this._currentWorkspace = this._currentTab.wsId;
+    }
 
     // Set and render current section
     const section = this._sections[sectionName];
@@ -129,7 +149,7 @@ Logic.registerSection('workspaces', {
 
       // Main click event
       div.addEventListener('click', () => { 
-        Logic.showSection('workspace', workspace.id); 
+        Logic.showSection('workspace', { wsId: workspace.id }); 
       });
 
       fragment.appendChild(div);
@@ -155,12 +175,12 @@ Logic.registerSection('workspace', {
     removeListeners('workspace-add-current-tab-button');
     document.getElementById('workspace-add-current-tab-button').addEventListener('click', async () => { 
       await browser.runtime.sendMessage({ type: 'ADD_CURRENT_TAB_TO_WORKSPACE', workspace });
-      Logic.showSection('workspace', workspace.id); 
+      Logic.showSection('workspace', { wsId: workspace.id }); 
     });
     removeListeners('workspace-add-all-tabs-button');
     document.getElementById('workspace-add-all-tabs-button').addEventListener('click', async () => { 
       await browser.runtime.sendMessage({ type: 'ADD_CURRENT_WINDOW_TO_WORKSPACE', workspace });
-      Logic.showSection('workspace', workspace.id); 
+      Logic.showSection('workspace', { wsId: workspace.id }); 
     });
     removeListeners('workspace-open-in-new-window-button');
     document.getElementById('workspace-open-in-new-window-button').addEventListener('click', () => { 
@@ -172,12 +192,12 @@ Logic.registerSection('workspace', {
     });
     removeListeners('workspace-rename-button');
     document.getElementById('workspace-rename-button').addEventListener('click', () => { 
-      Logic.showSection('workspace-form', workspace.id); 
+      Logic.showSection('workspace-form', { wsId: workspace.id }); 
     });
     removeListeners('workspace-delete-tabs-button');
     document.getElementById('workspace-delete-tabs-button').addEventListener('click', async () => { 
       await browser.runtime.sendMessage({ type: 'DELETE_TABS_BY_WORKSPACE', workspace });
-      Logic.showSection('workspace', workspace.id); 
+      Logic.showSection('workspace', { wsId: workspace.id }); 
     });
     removeListeners('workspace-delete-button');
     document.getElementById('workspace-delete-button').addEventListener('click', async () => { 
@@ -186,11 +206,35 @@ Logic.registerSection('workspace', {
     });
 
     // Tab list
-    workspace.tabs.forEach(tab => {
+    workspace.tabs.forEach(({ title, tabId, wsId }) => {
       const div = document.createElement('div');
-      div.classList.add('item');
-      div.classList.add('clickable');
-      div.innerHTML = tab.title;
+      div.classList.add('item', 'clickable', 'tab');
+      div.innerHTML = title;
+
+      const grp = document.createElement('div');
+      grp.classList.add('ui', 'small', 'basic', 'icon', 'buttons');
+
+      // const btnPin = document.createElement('button');
+      // btnPin.classList.add('ui', 'button');
+      // btnPin.innerHTML = '<i class="pin icon"></i>';
+      // grp.appendChild(btnPin);
+
+      const btnEdit = document.createElement('button');
+      btnEdit.classList.add('ui', 'button');
+      btnEdit.innerHTML = '<i class="pencil icon"></i>';
+      grp.appendChild(btnEdit);
+      btnEdit.addEventListener('click', () => Logic.showSection('tab-form', { tabId })); 
+
+      const btnDelete = document.createElement('button');
+      btnDelete.classList.add('ui', 'button');
+      btnDelete.innerHTML = '<i class="trash icon"></i>';
+      grp.appendChild(btnDelete);
+      btnDelete.addEventListener('click', async () => {
+        await browser.runtime.sendMessage({ type: 'DELETE_TABS_BY_ID', tabId }); 
+        Logic.showSection('workspace', { wsId }); 
+      }); 
+
+      div.appendChild(grp);
       fragment.appendChild(div);
     });
 
@@ -213,13 +257,48 @@ Logic.registerSection('workspace-form', {
     document.getElementById('workspace-form-title').value = workspace.id ? workspace.title : '';
     
     // Submit button
-    removeListeners('workspace-form-submit-button');
+    removeListeners('workspace-form');
     document.getElementById('workspace-submit-button').innerHTML = workspace.id ? 'Save' : 'Create';
-    document.getElementById('workspace-form-submit-button').addEventListener('submit', async event => { 
+    document.getElementById('workspace-form').addEventListener('submit', async event => { 
       event.preventDefault();
       if (!event.target.elements[0].value) return;
       await browser.runtime.sendMessage({ type: 'CREATE_OR_EDIT_WORKSPACE', workspace: { ...workspace, title: event.target.elements[0].value } }); 
       Logic.showSection('workspaces'); 
+    });
+  }
+});
+
+Logic.registerSection('tab-form', {
+  sectionId: 'container-tab-form',
+  init() {
+  },
+  async render() {
+    const tab = Logic.currentTab() || { tabId: 999, title: 'This title should not be shown', wsId: 1, url: 'www.perdu.com' };
+    
+    // Back button
+    document.getElementById('tab-form-back-button').addEventListener('click', () => { 
+      Logic.showSection('workspace', { wsId: tab.wsId }); 
+    });
+
+    // Fields
+    document.getElementById('tab-form-title').value = tab.title;
+    document.getElementById('tab-form-url').value = tab.url;
+    
+    // Submit button
+    removeListeners('tab-form');
+    document.getElementById('tab-form').addEventListener('submit', async event => { 
+      event.preventDefault();
+      if (!event.target.elements[0].value) return;  // TODO: Replace with validation
+
+      // Merge form data with tab, and make it a single-element array
+      const allowedFields = ['title', 'url'];
+      const tabs = [Object.assign(tab, [...event.target.elements]
+        .filter(e => allowedFields.includes(e.name))
+        .map(e => ({ [e.name]: e.value }))
+        .reduce((data, e) => Object.assign(data, e), {}))];
+
+      await browser.runtime.sendMessage({ type: 'CREATE_OR_EDIT_TAB', tabs }); 
+      Logic.showSection('workspace', { wsId: tab.wsId }); 
     });
   }
 });
@@ -239,6 +318,8 @@ Logic.registerSection('settings', {
 });
 
 Logic.init();
+// Logic.showSection('tab-form', { tabId: 3 });
 Logic.showSection('workspaces');
 
+// eslint-disable-next-line no-undef
 $('.ui.dropdown').dropdown();

@@ -15,6 +15,8 @@ module.exports = {
     'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     semi: [2, 'always'],
-    quotes: ['error', 'single']
+    quotes: ['error', 'single'],
+    'key-spacing': ['error', { 'beforeColon': false }],
+    'object-curly-spacing': ['error', 'always', { 'arraysInObjects': false }]
   },
 };

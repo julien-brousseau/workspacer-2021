@@ -54,10 +54,18 @@ export const deleteWorkspace = async (workspace) => {
   return;
 };
 
-export const deleteTabs = async (wsId) => {
+export const deleteTabsFromWorkspace = async (wsId) => {
   await connection.remove({
     from: TABS_TABLE,
     where: { wsId }
+  });
+  return;
+};
+
+export const deleteTab = async (tabId) => {
+  await connection.remove({
+    from: TABS_TABLE,
+    where: { tabId }
   });
   return;
 };

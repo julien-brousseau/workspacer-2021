@@ -24,11 +24,17 @@ async function handleMessageFromBackground(action) {
   else if (action.type === 'CREATE_OR_EDIT_WORKSPACE') {
     return await db.createOrUpdateWorkspace(action.workspace);
   }
+  else if (action.type === 'CREATE_OR_EDIT_TAB') {
+    return await db.createOrUpdateTabs(action.tabs);
+  }
   else if (action.type === 'DELETE_WORKSPACE') {
     return await db.deleteWorkspace(action.workspace);
   }
   else if (action.type === 'DELETE_TABS_BY_WORKSPACE') {
-    return await db.deleteTabs(action.workspace.id);
+    return await db.deleteTabsFromWorkspace(action.workspace.id);
+  }
+  else if (action.type === 'DELETE_TABS_BY_ID') {
+    return await db.deleteTab(action.tabId);
   }
   else if (action.type === 'DELETE_ALL_WORKSPACES') {
     return await db.deleteEverything();

@@ -53,3 +53,12 @@ form {
 #container-workspace-controls {
   border-bottom: 1px solid #CCCCCC;
 }
+
+.tab {
+  display: flex;
+  align-items: center;
+}
+
+.tab .buttons {
+  margin-left: auto;
+}
