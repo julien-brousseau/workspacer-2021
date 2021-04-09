@@ -6,46 +6,50 @@ initDb();
 browser.runtime.onMessage.addListener(handleMessageFromBackground);
 
 async function handleMessageFromBackground(action) {
+  // Fetch
   if (action.type === 'FETCH_ALL_WORKSPACES') {
     return await db.fetchAll();
-  }
-  else if (action.type === 'ADD_CURRENT_TAB_TO_WORKSPACE') {
-    const tab = await fetchActiveTab();
+
+  // Create/edit
+  } else if (action.type === 'CREATE_OR_EDIT_WORKSPACE') {
+    return await db.createOrUpdateWorkspace(action.workspace);
+
+  } else if (action.type === 'CREATE_OR_EDIT_TABS') {
+    return await db.createOrUpdateTabs(action.tabs);
+
+  } else if (action.type === 'ADD_CURRENT_TAB_TO_WORKSPACE') {
+    const tab = await getCurrentTab();
     return tab ? await db.createOrUpdateTabs([{ ...tab, wsId: action.workspace.id }]) : false;
-  }
-  else if (action.type === 'ADD_CURRENT_WINDOW_TO_WORKSPACE') {
+
+  } else if (action.type === 'ADD_CURRENT_WINDOW_TO_WORKSPACE') {
     const tabs = await fetchAllTabsFromWindow();
     return await db.createOrUpdateTabs(tabs.map(t => ({ ...t, wsId: action.workspace.id })));
-  }
-  else if (action.type === 'OPEN_WORKSPACE') {
+    
+  // Delete
+  } else if (action.type === 'DELETE_TAB_BY_ID') {
+    return await db.deleteTab(action.tabId);
+
+  } else if (action.type === 'CLEAR_WORKSPACE_TABS') {
+    return await db.deleteTabsFromWorkspace(action.workspace.id);
+
+  } else if (action.type === 'DELETE_WORKSPACE') {
+    return await db.deleteWorkspace(action.workspace);
+
+  } else if (action.type === 'CLEAR_WORKSPACES') {
+    return await db.deleteEverything();
+    
+  // Browser actions
+  } else if (action.type === 'OPEN_WORKSPACE') {
     const { currentWindow, tabs } = action;
     openTabsInWindow(tabs, currentWindow);
-  }
-  else if (action.type === 'CREATE_OR_EDIT_WORKSPACE') {
-    return await db.createOrUpdateWorkspace(action.workspace);
-  }
-  else if (action.type === 'CREATE_OR_EDIT_TAB') {
-    return await db.createOrUpdateTabs(action.tabs);
-  }
-  else if (action.type === 'DELETE_WORKSPACE') {
-    return await db.deleteWorkspace(action.workspace);
-  }
-  else if (action.type === 'DELETE_TABS_BY_WORKSPACE') {
-    return await db.deleteTabsFromWorkspace(action.workspace.id);
-  }
-  else if (action.type === 'DELETE_TABS_BY_ID') {
-    return await db.deleteTab(action.tabId);
-  }
-  else if (action.type === 'DELETE_ALL_WORKSPACES') {
-    return await db.deleteEverything();
-  }
-  else {
+    
+  } else {
     console.log('ACTION NOT FOUND');
   }
 }
 
 // Fetch the active {tab} from current window
-async function fetchActiveTab () {
+async function getCurrentTab () {
   return browser.tabs.query({ currentWindow: true, active: true })
     .then(([tab]) => {
       // Exclude invalid tabs
@@ -55,7 +59,7 @@ async function fetchActiveTab () {
       }
       return filterRawTab(tab);
     })
-    .catch(e => 'Error > fetchActiveTab >> ' + e);
+    .catch(e => 'Error > getCurrentTab >> ' + e);
 }
 
 // Fetch all tabs from the current window

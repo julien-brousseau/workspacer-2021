@@ -2,6 +2,7 @@ import { connection } from './jsstore.js';
 
 import { WORKSPACES_TABLE, TABS_TABLE } from './schema.js';
 
+// Fetch
 export const fetchAll_separated = async () => {
   const workspaces = await connection.select({
     from: WORKSPACES_TABLE,
@@ -18,17 +19,51 @@ export const fetchAll = async () => {
   });
   const tabs = await connection.select({
     from: TABS_TABLE,
+    order: [
+      { by: 'position', type: 'asc' }, 
+      { by: 'pinned', type: 'desc' }
+    ]
   });
   return workspaces.map(w => ({ ...w, tabs: tabs.filter(t => t.wsId == w.id) }));
 };
 
+export const fetchTabsFromWorkspace = async wsId => {
+  const tabs = await connection.select({
+    from: TABS_TABLE,
+    where: { wsId },
+    order: {
+      by: 'position',
+      type: 'asc'
+    }
+  });
+  return tabs;
+};
+
+// Create/edit
 export const createOrUpdateTabs = async (tabs) => {
+  const { wsId } = tabs[0];
+
+  // Fetch tabs from workspace and exclude those in args
+  const tabIds = tabs.map(t => t.tabId || 0);
+  const tabsFromWorkspace = (await fetchTabsFromWorkspace(wsId))
+    .filter(t => !tabIds.includes(t.tabId));
+
+  // Merge filtered workspace tabs with new tabData
+  const values = [...tabsFromWorkspace, ...tabs]
+    // Sort by position and pinned status
+    .sort((a, b) => a.position === b.position ? 0 : a.position > b.position ? 1 : -1)
+    .sort((a, b) => b.pinned - a.pinned)
+    // Reset the position of each tab
+    .map((t, i) => ({ ...t, position: i + 1 }));
+  
+  console.log('values :>> ', values);
   const insertedTabs = await connection.insert({
     into: TABS_TABLE,
-    values: tabs,
+    values,
     return: true,
     upsert: true,
   });
+  console.log('insertedTabs :>> ', insertedTabs);
   return insertedTabs[0];
 };
 
@@ -42,6 +77,7 @@ export const createOrUpdateWorkspace = async (ws) => {
   return workspace[0];
 };
 
+// Delete
 export const deleteWorkspace = async (workspace) => {
   await connection.remove({
     from: WORKSPACES_TABLE,

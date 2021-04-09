@@ -40,15 +40,15 @@ export const schema = () => {
         dataType: 'string',
         notNull: true,
       },
-      //     position: {
-      //       dataType: DATA_TYPE.Integer,
-      //       notNull: false
-      //     },
-      //     pinned: {
-      //       dataType: DATA_TYPE.Boolean,
-      //       notNull: true,
-      //       default: false
-      //     },
+      position: {
+        dataType: 'number',
+        notNull: true
+      },
+      pinned: {
+        dataType: 'boolean',
+        notNull: true,
+        default: false
+      },
       //     discarded: {
       //       dataType: DATA_TYPE.Boolean,
       //       notNull: true,
@@ -70,5 +70,5 @@ export const schema = () => {
     },
   };
 
-  return { name: 'workspacer_db', tables: [workspaces_table, tabs_table] };
+  return { name: 'workspacer_db', tables: [workspaces_table, tabs_table]};
 };

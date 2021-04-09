@@ -17,6 +17,8 @@ module.exports = {
     semi: [2, 'always'],
     quotes: ['error', 'single'],
     'key-spacing': ['error', { 'beforeColon': false }],
-    'object-curly-spacing': ['error', 'always', { 'arraysInObjects': false }]
+    'object-curly-spacing': ['error', 'always', { 'arraysInObjects': false }],
+    'space-in-parens': ['error', 'never'],
+    'brace-style': 'error'
   },
 };
