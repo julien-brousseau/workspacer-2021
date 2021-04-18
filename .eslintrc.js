@@ -19,6 +19,7 @@ module.exports = {
     'key-spacing': ['error', { 'beforeColon': false }],
     'object-curly-spacing': ['error', 'always', { 'arraysInObjects': false }],
     'space-in-parens': ['error', 'never'],
-    'brace-style': 'error'
+    'brace-style': 'error',
+    'space-before-function-paren': ['error', 'always']
   },
 };

@@ -5,10 +5,10 @@ initDb();
 
 browser.runtime.onMessage.addListener(handleMessageFromBackground);
 
-async function handleMessageFromBackground(action) {
+async function handleMessageFromBackground (action) {
   // Fetch
   if (action.type === 'FETCH_ALL_WORKSPACES') {
-    return await db.fetchAll();
+    return await db.fetchAllWorkspaces();
 
   // Create/edit
   } else if (action.type === 'CREATE_OR_EDIT_WORKSPACE') {
@@ -72,11 +72,10 @@ async function fetchAllTabsFromWindow () {
 }
 
 // Filter out un-necessary props from a raw tab object
-function filterRawTab(tab) {
+function filterRawTab (tab) {
   const props = ['title', 'url', 'pinned', 'discarded', 'favIconUrl'];
   return props.reduce((filteredProps, prop) => ({ ...filteredProps, [prop]: tab[prop] }), {});
 }
-
 
 // Query browser to create a new window containing [tabs]
 async function openTabsInWindow (tabs, currentWindow = false) {

@@ -6,117 +6,127 @@
     <link rel="stylesheet" href="css/semantic.min.css">
     <link rel="stylesheet" href="css/common.css">
   </head>
-    <body>
-    
+
+  <body>
+
     <!-- View all workspaces -->
     <div id="container-workspaces" class="container hide">
-      <div id="container-workspaces-header">
-        <h1>
-          Workspaces
-          <button id="settings-button" class="ui secondary button right floated">Settings</button>
-          <button id="new-workspace-button" class="ui primary button right floated">New Workspace</button>
-        </h1>
+      <div id="container-workspaces-header" class="container-header home">
+        <h1>My workspaces</h1>
+        <button id="settings-button" class="ui basic ghost icon button" title="Extension settings"><i class="cog icon"></i></button>
+        <button id="new-workspace-button" class="ui primary inverted icon button" title="Create a new workspace">New workspace</button>
       </div>
       <div id="container-workspaces-content"></div>
     </div>
 
     <!-- View a single workspace -->
     <div id="container-workspace" class="container hide">
-      <div id="container-workspace-header">
-        <h1>
-          Workspace info
-          <button id="workspace-back-button" class="ui secondary button right floated">Back</button>
-        </h1>
+      <div id="container-workspace-header" class="container-header">
+        <button id="workspace-back-button" class="ui basic ghost icon back button" title="Back to the list"><i class="chevron left icon"></i></button>
+        <h1>Workspace info</h1>
       </div>
       <div id="container-workspace-controls" style="padding: 10px;">
-        
-        <!-- Add tabs dropdown -->
-        <div class="ui primary button dropdown">
-          <div class="text">Add tab</div>
-          <i class="dropdown icon"></i>
-          <div class="menu">
-            <div class="item" id="workspace-add-current-tab-button" class="item">Curren tab</div>
-            <div class="item" id="workspace-add-all-tabs-button" class="item">All tabs from window</div>
+        <h3 id="workspace-title">WORKSPACE</h3>
+        <!-- Controls -->
+        <div class="ui icon buttons">
+          <div class="ui green icon top center pointing dropdown button" title="Add tabs to this workspace">
+            <i class="plus icon"></i> Add tab
+            <div class="menu">
+              <div class="item" id="workspace-add-current-tab-button" title="Add current tab to workspace">Current tab</div>
+              <div class="item" id="workspace-add-all-tabs-button" title="Add all tabs from current window">Current window</div>
+            </div>
+          </div>
+          
+          <div class="ui orange icon top center pointing dropdown button" title="Open all tabs from this workspace">
+            <i class="window restore icon"></i> Open
+            <div class="menu">
+              <div class="item" id="workspace-open-in-new-window-button" title="Open all tabs in a new window">Open in a new window</div>
+              <div class="item" id="workspace-open-in-current-window-button" title="Replace current window with these tabs">Replace current window</div>
+            </div>
+          </div>
+          
+          <div class="ui secondary icon top center pointing dropdown button" title="More actions">
+            <i class="bars icon"></i>
+            <div class="menu">
+              <div class="item" id="workspace-rename-button" title="Change current workspace's name">Rename workspace</div>
+              <div class="item" id="workspace-delete-tabs-button" title="Remove all tabs from this workspace">Delete all tabs</div>
+              <div class="item" id="workspace-delete-button" title="Delete this workspace and all tabs">Delete workspace</div>
+            </div>
           </div>
         </div>
-
-        <!-- Open tabs dropdown -->
-        <div class="ui primary button dropdown">
-          <div class="text">Open</div>
-          <i class="dropdown icon"></i>
-          <div class="menu">
-            <div class="item" id="workspace-open-in-new-window-button" class="item">In a new window</div>
-            <div class="item" id="workspace-open-in-current-window-button" class="item">Replace current window</div>
-          </div>
-        </div>
-        
-        <!-- Rename/Delete dropdown -->
-        <div class="ui primary button dropdown">
-          <div class="text">Options</div>
-          <i class="dropdown icon"></i>
-          <div class="menu">
-            <div class="item" id="workspace-rename-button" class="item">Rename</div>
-            <div class="item" id="workspace-delete-tabs-button" class="item">Delete all tabs</div>
-            <div class="item" id="workspace-delete-button" class="item">Delete workspace</div>
-          </div>
-        </div>
-
       </div>
       <div id="container-workspace-tablist"></div>
     </div>
 
     <!-- Workspace form for create/edit -->
     <div id="container-workspace-form" class="container hide">
-      <div id="container-workspace-form-header">
-        <h1>
-          New workspace
-          <button id="workspace-form-back-button" class="ui secondary button right floated">Back</button>
-        </h1>
+      <div id="container-workspace-form-header" class="container-header">
+        <button id="workspace-form-back-button" class="ui basic ghost icon back button" title="Back to the list"><i class="chevron left icon"></i></button>
+        <h1 id="workspace-form-header-title">New workspace</h1>
       </div>
       <div id="container-workspace-form-content">
-        <form id="workspace-form" class="ui form basic">
+        <form id="workspace-form" class="ui form basic" autocomplete="off">
           <div class="field">
             <label>Workspace name</label>
             <input id="workspace-form-title" name="title" type="text" placeholder="Ex: School">
           </div>
-          <button id="workspace-submit-button" class="ui primary button" type="submit">Create</button>
+          <button id="workspace-submit-button" class="ui secondary button" type="submit" title="Save">Create</button>
         </form>
       </div>
     </div>
 
     <!-- Tab form for edit -->
     <div id="container-tab-form" class="container hide">
-      <div id="container-tab-form-header">
-        <h1>
-          Edit tab
-          <button id="tab-form-back-button" class="ui secondary button right floated">Back</button>
-        </h1>
+      <div id="container-tab-form-header" class="container-header">
+        <button id="tab-form-back-button" class="ui basic ghost icon back button" title="Back to workspace"><i class="chevron left icon"></i></button>
+        <h1>Edit tab</h1>
       </div>
       <div id="container-tab-form-content">
         <form id="tab-form" class="ui form basic" autocomplete="off">
           <div class="field">
             <label>Tab name</label>
-            <input id="tab-form-title" name="title" type="text" placeholder="Your favorite porn site">
-            <label>URL</label>
-            <input id="tab-form-url" name="url" type="text" placeholder="https://www.midgetporn.com">
-            <!-- <label>Workspace</label> -->
-            <!-- <input id="tab-form-wsId" name="wsId" type="text"> -->
+            <input id="tab-form-title" name="title" type="text" placeholder="Your favorite unicorn site">
           </div>
-          <button id="tab-submit-button" class="ui primary button" type="submit">Save</button>
+          <div class="field">
+            <label>URL</label>
+            <input id="tab-form-url" name="url" type="text" placeholder="https://www.rainbowsandstuff.com">
+          </div>
+          <button id="tab-submit-button" class="ui secondary button" type="submit">Save</button>
         </form>
       </div>
     </div>
 
     <!-- App settings -->
     <div id="container-settings" class="container hide">
-      <div id="container-settings-header">
-        <h1>
-          Settings
-          <button id="settings-back-button" class="ui secondary button right floated">Back</button>
-        </h1>
+      <div id="container-settings-header" class="container-header">
+        <button id="settings-back-button" class="ui basic ghost icon back button" title="Back to the list"><i class="chevron left icon"></i></button>
+        <h1>Extension settings</h1>
       </div>
       <div id="container-settings-content">
-        <button id="delete-all-workspaces-button" class="ui red button">Delete all workspaces</button>
+        <div class="item static">
+          <div class="settings-description">
+            <h2>Export user data</h2>
+            <p>Export all workspaces and tab data as a .json file in your Downloads folder.</p>
+          </div>
+          <button id="export-all-workspaces-button" class="ui secondary button" title="Export your current user data">Export</button>
+        </div>
+        <div class="ui form item static">
+          <div class="settings-description">
+            <h2>Import user data</h2>
+            <p>Import the content of a previously exported .json file by copy/pasting its content in the field.</p>
+            <div class="field">
+              <textarea id="import-field" rows="3" placeholder="Paste .json file contents here"></textarea>
+            </div>
+          </div>
+          <button id="import-all-workspaces-button" class="ui secondary button" title="Import field content in your workspaces">Import</button>
+        </div> 
+        <div class="item static">
+          <div class="settings-description">
+            <h2>Delete everything</h2>
+            <p class="warning">Warning: This operation is irreversible! Please make sure to manually export your current data before clicking.</p>
+          </div>
+          <button id="delete-all-workspaces-button" class="ui red button" title="Delete all your workspaces and tabs">Delete everything</button>
+        </div>
       </div>
     </div>
 

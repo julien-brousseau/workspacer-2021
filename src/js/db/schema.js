@@ -49,15 +49,15 @@ export const schema = () => {
         notNull: true,
         default: false
       },
+      favIconUrl: {
+        dataType: 'string',
+        notNull: false
+      },
       //     discarded: {
       //       dataType: DATA_TYPE.Boolean,
       //       notNull: true,
       //       default: false
       //     },
-      //     favIconUrl: {
-      //       dataType: DATA_TYPE.String,
-      //       notNull: false
-      //     }
       //     // cookieStoreId: {
       //     //   dataType: DATA_TYPE.Integer,
       //     //   notNull: true,

@@ -2,18 +2,8 @@ import { connection } from './jsstore.js';
 
 import { WORKSPACES_TABLE, TABS_TABLE } from './schema.js';
 
-// Fetch
-export const fetchAll_separated = async () => {
-  const workspaces = await connection.select({
-    from: WORKSPACES_TABLE,
-  });
-  const tabs = await connection.select({
-    from: TABS_TABLE,
-  });
-  return { workspaces, tabs };
-};
-
-export const fetchAll = async () => {
+// Returns array of Workspaces, each containing a list of Tabs
+export const fetchAllWorkspaces = async () => {
   const workspaces = await connection.select({
     from: WORKSPACES_TABLE,
   });
@@ -27,7 +17,8 @@ export const fetchAll = async () => {
   return workspaces.map(w => ({ ...w, tabs: tabs.filter(t => t.wsId == w.id) }));
 };
 
-export const fetchTabsFromWorkspace = async wsId => {
+// 
+export const fetchAllTabsFromWorkspace = async wsId => {
   const tabs = await connection.select({
     from: TABS_TABLE,
     where: { wsId },
@@ -39,13 +30,14 @@ export const fetchTabsFromWorkspace = async wsId => {
   return tabs;
 };
 
-// Create/edit
-export const createOrUpdateTabs = async (tabs) => {
+// Create new tab, or edit if tab argument contains tabId, then rebuild positions
+export const createOrUpdateTabs = async tabs => {
+  if (!tabs.length) return;
   const { wsId } = tabs[0];
 
   // Fetch tabs from workspace and exclude those in args
   const tabIds = tabs.map(t => t.tabId || 0);
-  const tabsFromWorkspace = (await fetchTabsFromWorkspace(wsId))
+  const tabsFromWorkspace = (await fetchAllTabsFromWorkspace(wsId))
     .filter(t => !tabIds.includes(t.tabId));
 
   // Merge filtered workspace tabs with new tabData
@@ -56,21 +48,19 @@ export const createOrUpdateTabs = async (tabs) => {
     // Reset the position of each tab
     .map((t, i) => ({ ...t, position: i + 1 }));
   
-  console.log('values :>> ', values);
-  const insertedTabs = await connection.insert({
+  // Replace tabs in database and return promise
+  return await connection.insert({
     into: TABS_TABLE,
     values,
     return: true,
     upsert: true,
   });
-  console.log('insertedTabs :>> ', insertedTabs);
-  return insertedTabs[0];
 };
 
-export const createOrUpdateWorkspace = async (ws) => {
+export const createOrUpdateWorkspace = async ws => {
   const workspace = await connection.insert({
     into: WORKSPACES_TABLE,
-    values: [ws],
+    values: Array.isArray(ws) ? ws : [ws],
     return: true,
     upsert: true,
   });
@@ -111,16 +101,3 @@ export const deleteEverything = async () => {
   await connection.clear(TABS_TABLE);
   return true;
 };
-
-// export const fetchOneWorkspace = async (id) => {
-//   const workspace = await connection.select({
-//     from: WORKSPACES_TABLE,
-//     where: { id },
-//     limit: 1,
-//   });
-//   const tabs = await connection.select({
-//     from: TABS_TABLE,
-//     where: { wsId: id },
-//   });
-//   return { ...workspace[0], tabs };
-// };
