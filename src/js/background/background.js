@@ -19,21 +19,28 @@ async function handleMessageFromBackground (action) {
 
   } else if (action.type === 'ADD_CURRENT_TAB_TO_WORKSPACE') {
     const tab = await getCurrentTab();
-    return tab ? await db.createOrUpdateTabs([{ ...tab, wsId: action.workspace.id }]) : false;
+    if (!tab) return 0;
+    await db.createOrUpdateTabs([{ ...tab, wsId: action.workspace.id }]);
+    return 1;
 
   } else if (action.type === 'ADD_CURRENT_WINDOW_TO_WORKSPACE') {
     const tabs = await fetchAllTabsFromWindow();
-    return await db.createOrUpdateTabs(tabs.map(t => ({ ...t, wsId: action.workspace.id })));
+    if (!tabs.length) return 0;
+    await db.createOrUpdateTabs(tabs.map(t => ({ ...t, wsId: action.workspace.id })));
+    return tabs.length;
     
   // Delete
-  } else if (action.type === 'DELETE_TAB_BY_ID') {
-    return await db.deleteTab(action.tabId);
+  // } else if (action.type === 'DELETE_TAB_BY_ID') {
+  //   return await db.deleteTab(action.tabId);
+
+  } else if (action.type === 'DELETE_TABS') {
+    return await db.deleteTabs(action.tabs);
 
   } else if (action.type === 'CLEAR_WORKSPACE_TABS') {
-    return await db.deleteTabsFromWorkspace(action.workspace.id);
+    return await db.deleteTabsFromWorkspace(action.wsId);
 
   } else if (action.type === 'DELETE_WORKSPACE') {
-    return await db.deleteWorkspace(action.workspace);
+    return await db.deleteWorkspace(action.wsId);
 
   } else if (action.type === 'CLEAR_WORKSPACES') {
     return await db.deleteEverything();

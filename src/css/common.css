@@ -39,12 +39,26 @@ form .field {
   margin-bottom: 15px !important;
 }
 
+#msg {
+  position: absolute;
+  top: -3px;
+  width: 100%;
+  padding-left: 100px;
+  padding-right: 140px;
+  text-align: center;
+}
+#msg .label {
+  width: auto; 
+  max-width: 180px;
+}
+
+.hide {
+  display: none !important;
+}
+
 /* Section container */
 .container {
   min-height: 100%;
-}
-.container.hide {
-  display: none !important;
 }
 .container .container-header {
   display: flex;

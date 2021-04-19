@@ -6,6 +6,7 @@ const Logic = {
   _workspaces: [],
   _currentWorkspace: null,
   _currentTab: null,
+  _msgTimeout: null,
 
   async init () {
   },
@@ -53,7 +54,6 @@ const Logic = {
 
   // Refresh data and process section 
   async showSection (sectionName, ids = {}) {
-
     // Reload workspaces from db
     await this.refreshWorkspaces();
 
@@ -112,8 +112,35 @@ const Logic = {
     this.showSection('workspace', { wsId: tab.wsId });
   },
 
-  // 
+  //
+  async addCurrentTab (workspace, currentWindow = false) {
+    const type = currentWindow ? 'ADD_CURRENT_WINDOW_TO_WORKSPACE' : 'ADD_CURRENT_TAB_TO_WORKSPACE';
+    const added = await browser.runtime.sendMessage({ type, workspace });
+    if (added) this.msg(`${ added } tab${ added > 1 ? 's' : '' } added`);
+    else this.msg('Error: Invalid tab', 'red');
+    return;
+  },
 
+  //
+  async openTabs (tabs, currentWindow = false) {
+    await browser.runtime.sendMessage({ type: 'OPEN_WORKSPACE', tabs, currentWindow });
+    return;
+  },
+
+  //
+  async deleteWorkspace (wsId) {
+    await browser.runtime.sendMessage({ type: 'DELETE_WORKSPACE', wsId });
+    Logic.msg('Workspace deleted', 'red');
+    return;
+  },
+
+  //
+  async deleteTabs (tabs) {
+    if (!Array.isArray(tabs)) tabs = [tabs];
+    const num = await browser.runtime.sendMessage({ type: 'DELETE_TABS', tabs });
+    Logic.msg(num + ' tabs deleted', 'red');
+    return;
+  },
 
   // Register and render static elements
   registerSection (name, section) {
@@ -135,7 +162,21 @@ const Logic = {
     const url = URL.createObjectURL(new Blob([json], { type }));
     if (DEBUG) console.log('Exporting workspaces :>> ', JSON.parse(json));
 
+    this.msg('User data exported!');
     return browser.downloads.download({ url, filename });
+  },
+
+  // Show the top message tag with auto-hide timer
+  msg (text, color = 'green') {
+    const colors = ['red', 'green'];
+    const el = document.getElementById('msg').childNodes[0];
+
+    el.innerHTML = text;
+    el.classList.remove(...colors, 'hide');
+    el.classList.add(color);
+
+    clearTimeout(this._msgTimeout);
+    this._msgTimeout = setTimeout(() => el.classList.add('hide'), 2500);
   }
 };
 
@@ -212,7 +253,7 @@ Logic.registerSection('workspaces', {
         title: 'Add current tab',
       }).addEventListener('click', async event => { 
           event.stopPropagation();
-          await browser.runtime.sendMessage({ type: 'ADD_CURRENT_TAB_TO_WORKSPACE', workspace });
+          await Logic.addCurrentTab(workspace);
           Logic.showSection('workspaces'); 
         });
       // Add 'open in new window' button
@@ -223,7 +264,7 @@ Logic.registerSection('workspaces', {
         title: 'Open in new window',
       }).addEventListener('click', event => { 
           event.stopPropagation();
-          browser.runtime.sendMessage({ type: 'OPEN_WORKSPACE', tabs });
+          Logic.openTabs(tabs);
         });
     });
 
@@ -259,21 +300,21 @@ Logic.registerSection('workspace', {
     // Static buttons
     removeListeners('workspace-add-current-tab-button');
     document.getElementById('workspace-add-current-tab-button').addEventListener('click', async () => { 
-      await browser.runtime.sendMessage({ type: 'ADD_CURRENT_TAB_TO_WORKSPACE', workspace });
+      await Logic.addCurrentTab(workspace);
       Logic.showSection('workspace', { wsId }); 
     });
     removeListeners('workspace-add-all-tabs-button');
     document.getElementById('workspace-add-all-tabs-button').addEventListener('click', async () => { 
-      await browser.runtime.sendMessage({ type: 'ADD_CURRENT_WINDOW_TO_WORKSPACE', workspace });
+      await Logic.addCurrentTab(workspace, true);
       Logic.showSection('workspace', { wsId }); 
     });
     removeListeners('workspace-open-in-new-window-button');
     document.getElementById('workspace-open-in-new-window-button').addEventListener('click', () => { 
-      browser.runtime.sendMessage({ type: 'OPEN_WORKSPACE', tabs });
+      Logic.openTabs(tabs);
     });
     removeListeners('workspace-open-in-current-window-button');
     document.getElementById('workspace-open-in-current-window-button').addEventListener('click', () => { 
-      browser.runtime.sendMessage({ type: 'OPEN_WORKSPACE', currentWindow: true, tabs });
+      Logic.openTabs(tabs, true);
     });
     removeListeners('workspace-rename-button');
     document.getElementById('workspace-rename-button').addEventListener('click', () => { 
@@ -281,12 +322,12 @@ Logic.registerSection('workspace', {
     });
     removeListeners('workspace-delete-tabs-button');
     document.getElementById('workspace-delete-tabs-button').addEventListener('click', async () => { 
-      await browser.runtime.sendMessage({ type: 'CLEAR_WORKSPACE_TABS', workspace });
+      await Logic.deleteTabs(tabs);
       Logic.showSection('workspace', { wsId }); 
     });
     removeListeners('workspace-delete-button');
     document.getElementById('workspace-delete-button').addEventListener('click', async () => { 
-      await browser.runtime.sendMessage({ type: 'DELETE_WORKSPACE', workspace });
+      await Logic.deleteWorkspace(wsId);
       Logic.showSection('workspaces'); 
     });
 
@@ -347,7 +388,7 @@ Logic.registerSection('workspace', {
         classes: ['ui', 'button'],
         title: 'Delete this tab'
       }).addEventListener('click', async () => {
-          await browser.runtime.sendMessage({ type: 'DELETE_TAB_BY_ID', tabId }); 
+          await Logic.deleteTabs(tab);
           Logic.showSection('workspace', { wsId }); 
         }); 
     });
@@ -388,7 +429,9 @@ Logic.registerSection('workspace-form', {
     document.getElementById('workspace-form').addEventListener('submit', async event => { 
       event.preventDefault();
       if (!event.target.elements[0].value) return;
+      // TODO: Extract to Logic
       const { id: wsId } = await browser.runtime.sendMessage({ type: 'CREATE_OR_EDIT_WORKSPACE', workspace: { ...workspace, title: event.target.elements[0].value } });
+      Logic.msg('Workspace ' + (id ? 'saved!' : 'created!'));
       Logic.showSection('workspace', { wsId }); 
     });
   }
@@ -417,6 +460,7 @@ Logic.registerSection('tab-form', {
       event.preventDefault();
       if (!event.target.elements[0].value || !event.target.elements[1].value) return;  // TODO: Replace with validation
 
+      // TODO: Extract to Logic
       // Merge form data with tab, and make it a single-element array
       const allowedFields = ['title', 'url'];
       const tabs = [Object.assign(tab, [...event.target.elements]
@@ -425,6 +469,7 @@ Logic.registerSection('tab-form', {
         .reduce((data, e) => Object.assign(data, e), {}))];
 
       await browser.runtime.sendMessage({ type: 'CREATE_OR_EDIT_TABS', tabs }); 
+      Logic.msg('Tab saved!');
       Logic.showSection('workspace', { wsId }); 
     });
   }
@@ -437,7 +482,9 @@ Logic.registerSection('settings', {
       Logic.showSection('workspaces'); 
     });
     document.getElementById('delete-all-workspaces-button').addEventListener('click', async () => { 
+      // TODO: Extract to Logic
       await browser.runtime.sendMessage({ type: 'CLEAR_WORKSPACES' }); 
+      Logic.msg('User data cleared!', 'red');
       Logic.showSection('workspaces'); 
     });
   },
@@ -454,27 +501,34 @@ Logic.registerSection('settings', {
     document.getElementById('import-all-workspaces-button').addEventListener('click', async () => { 
       // Fetch ws and tabs from textarea
       const { value } = document.getElementById('import-field');
-      const { ws, tabs } = JSON.parse(value);
-      const newTabs = [];
+      try {
+        // TODO: Extract to Logic
+        const { ws, tabs } = JSON.parse(value);
+        const newTabs = [];
 
-      // Create new workspace ids and assign it to tabs
-      let wsId = Logic.nextWorkspaceId();
-      ws.forEach(w => {
-        newTabs.push(...tabs
-          // Remove tab ID and set new workspace ID
-          .filter(t => t.wsId === w.id)
-          .map(({ tabId, ...t }) => ({ ...t, wsId })) // eslint-disable-line
-        );
-        w.id = wsId ++;
-      });
+        // Create new workspace ids and assign it to tabs
+        let wsId = Logic.nextWorkspaceId();
+        ws.forEach(w => {
+          newTabs.push(...tabs
+            // Remove tab ID and set new workspace ID
+            .filter(t => t.wsId === w.id)
+            .map(({ tabId, ...t }) => ({ ...t, wsId })) // eslint-disable-line
+          );
+          w.id = wsId ++;
+        });
 
-      // Add to database
-      await browser.runtime.sendMessage({ type: 'CREATE_OR_EDIT_WORKSPACE', workspace: ws }); 
-      await browser.runtime.sendMessage({ type: 'CREATE_OR_EDIT_TABS', tabs: newTabs }); 
-      if (DEBUG) console.log('Imported workspaces :>> ', ws);
-      if (DEBUG) console.log('Imported tabs :>> ', newTabs);
+        // Add to database
+        await browser.runtime.sendMessage({ type: 'CREATE_OR_EDIT_WORKSPACE', workspace: ws }); 
+        await browser.runtime.sendMessage({ type: 'CREATE_OR_EDIT_TABS', tabs: newTabs }); 
+        if (DEBUG) console.log('Imported workspaces :>> ', ws);
+        if (DEBUG) console.log('Imported tabs :>> ', newTabs);
 
-      Logic.showSection('workspaces'); 
+        Logic.msg('User data imported!');
+        Logic.showSection('workspaces'); 
+      } catch (e) {
+        Logic.msg('Invalid data', 'red');
+        return e;
+      }
     });
   }
 });

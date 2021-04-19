@@ -68,32 +68,31 @@ export const createOrUpdateWorkspace = async ws => {
 };
 
 // Delete
-export const deleteWorkspace = async (workspace) => {
+export const deleteWorkspace = async (id) => {
   await connection.remove({
     from: WORKSPACES_TABLE,
-    where: { id: workspace.id }
+    where: { id }
   });
   await connection.remove({
     from: TABS_TABLE,
-    where: { wsId: workspace.id }
+    where: { wsId: id }
   });
   return;
 };
 
-export const deleteTabsFromWorkspace = async (wsId) => {
-  await connection.remove({
+export const deleteTabsFromWorkspace = async (id) => {
+  return await connection.remove({
     from: TABS_TABLE,
-    where: { wsId }
+    where: { wsId: id }
   });
-  return;
 };
 
-export const deleteTab = async (tabId) => {
-  await connection.remove({
+export const deleteTabs = async tabs => {
+  const ids = tabs.map(t => t.tabId);
+  return await connection.remove({
     from: TABS_TABLE,
-    where: { tabId }
+    where: { tabId: { in: ids } }
   });
-  return;
 };
 
 export const deleteEverything = async () => {
