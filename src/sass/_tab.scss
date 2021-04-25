@@ -1,0 +1,37 @@
+.tab {
+  .title {
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+    margin: auto 3px;
+  }
+
+  .favIcon {
+    width: 24px;
+    height: 24px;
+    margin: auto 0px;
+    padding: 3px;
+    border-radius: 50%;
+    background-color: $item-background;
+  }
+
+  .buttons {
+    margin-left: auto;
+  
+    button.ui.button.pinned {
+      color: $btn-pinned-color !important;
+      background-color: $btn-pinned-background !important;
+    }
+
+    button.ui.button.pinned:hover {
+      background-color: $btn-pinned-hover-background !important;
+    }
+  }
+
+  &:first-child button.ui.button.move-up, 
+  &:last-child button.ui.button.move-down {
+    pointer-events: none !important;
+    color: $btn-disabled-color !important;
+    background-color: $btn-disabled-background !important;
+  }
+}

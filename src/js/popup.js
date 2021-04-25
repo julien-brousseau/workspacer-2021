@@ -1,6 +1,6 @@
 const DEBUG = false;
 
-// Main 
+// Main logic
 const Logic = {
   _sections: {},
   _workspaces: [],
@@ -89,6 +89,28 @@ const Logic = {
     sectionSelector.classList.remove('hide');
   },
 
+  // Register and render static elements
+  registerSection (name, section) {
+    this._sections[name] = section;
+    section.renderStatic();
+  },
+
+
+  // HELPERS
+
+  // Show the top message tag with auto-hide timer
+  msg (text, color = 'green') {
+    const colors = ['red', 'green'];
+    const el = document.getElementById('msg').childNodes[0];
+
+    el.innerHTML = text;
+    el.classList.remove(...colors, 'hide');
+    el.classList.add(color);
+
+    clearTimeout(this._msgTimeout);
+    this._msgTimeout = setTimeout(() => el.classList.add('hide'), 2500);
+  },
+
   // Swap tab positions
   async moveTab (tab, direction) {
     if (!['up', 'down'].includes(direction)) return console.log('Invalid direction:', direction);
@@ -104,7 +126,6 @@ const Logic = {
     await browser.runtime.sendMessage({ type: 'CREATE_OR_EDIT_TABS', tabs });
     this.showSection('workspace', { wsId: this._currentWorkspace.id });
   },
-
   // Toggle pinning tab on top section of the list
   async pinTab (tab) {
     const tabs = [{ ...tab, pinned: !tab.pinned }];
@@ -113,6 +134,15 @@ const Logic = {
   },
 
   //
+  async submitWorkspace (workspace) {
+    const { id } = await browser.runtime.sendMessage({ type: 'CREATE_OR_EDIT_WORKSPACE', workspace });
+    if (id) {
+      Logic.msg('Workspace ' + (workspace.id ? 'saved!' : 'created!'));
+      return id;
+    }
+    return false;
+  },
+  // 
   async addCurrentTab (workspace, currentWindow = false) {
     const type = currentWindow ? 'ADD_CURRENT_WINDOW_TO_WORKSPACE' : 'ADD_CURRENT_TAB_TO_WORKSPACE';
     const added = await browser.runtime.sendMessage({ type, workspace });
@@ -120,32 +150,23 @@ const Logic = {
     else this.msg('Error: Invalid tab', 'red');
     return;
   },
-
   //
   async openTabs (tabs, currentWindow = false) {
     await browser.runtime.sendMessage({ type: 'OPEN_WORKSPACE', tabs, currentWindow });
     return;
   },
-
   //
   async deleteWorkspace (wsId) {
     await browser.runtime.sendMessage({ type: 'DELETE_WORKSPACE', wsId });
     Logic.msg('Workspace deleted', 'red');
     return;
   },
-
   //
   async deleteTabs (tabs) {
     if (!Array.isArray(tabs)) tabs = [tabs];
     const num = await browser.runtime.sendMessage({ type: 'DELETE_TABS', tabs });
     Logic.msg(num + ' tabs deleted', 'red');
     return;
-  },
-
-  // Register and render static elements
-  registerSection (name, section) {
-    this._sections[name] = section;
-    section.renderStatic();
   },
 
   // Export all workspaces and tabs as a JSON file in Downloads folder
@@ -166,18 +187,6 @@ const Logic = {
     return browser.downloads.download({ url, filename });
   },
 
-  // Show the top message tag with auto-hide timer
-  msg (text, color = 'green') {
-    const colors = ['red', 'green'];
-    const el = document.getElementById('msg').childNodes[0];
-
-    el.innerHTML = text;
-    el.classList.remove(...colors, 'hide');
-    el.classList.add(color);
-
-    clearTimeout(this._msgTimeout);
-    this._msgTimeout = setTimeout(() => el.classList.add('hide'), 2500);
-  }
 };
 
 // -------------------------------------------------------------------------
@@ -210,29 +219,25 @@ function appendElement (parent, { tag = 'div', classes = [], text = '', title = 
 Logic.registerSection('workspaces', {
   sectionId: 'container-workspaces',
   renderStatic () {
-    document.getElementById('settings-button').addEventListener('click', () => { 
-      Logic.showSection('settings'); 
-    });
-    document.getElementById('new-workspace-button').addEventListener('click', () => { 
-      Logic.showSection('workspace-form'); 
-    });
+    document.getElementById('settings-button').addEventListener('click', () => Logic.showSection('settings'));
+    document.getElementById('new-workspace-button').addEventListener('click', () => Logic.showSection('workspace-form'));
   },
   async render () {
     const workspaces = Logic.workspaces();
 
     const fragment = document.createDocumentFragment();
     workspaces.forEach((workspace) => {
-      const { id, title, tabs } = workspace;
+      const { id: wsId, title, tabs } = workspace;
 
       // Item container
       const container = appendElement(fragment, { classes: ['item', 'clickable']});
-      container.addEventListener('click', () => Logic.showSection('workspace', { wsId: id }));
+      container.addEventListener('click', () => Logic.showSection('workspace', { wsId }));
 
       // Tab count label
       const nbTabs = tabs.length;
       appendElement(container, { 
         text: nbTabs,
-        classes: ['ui', 'basic', 'circular', 'label'],
+        classes: ['ui', 'tiny', 'basic', 'circular', 'label'],
         title: `This worspace contains ${ nbTabs || 'no' } tab${ nbTabs > 1 ? 's' : '' }`
       });
       // Workspace title
@@ -269,25 +274,20 @@ Logic.registerSection('workspaces', {
     });
 
     // Empty item
-    if (!workspaces.length) {
-      const emptyItem = document.createElement('div');
-      emptyItem.classList.add('item', 'empty');
-      emptyItem.innerHTML = '<h2>You have no workspace</h2>Create a new workspace to continue.';
-      fragment.appendChild(emptyItem);
-    }
+    if (!workspaces.length) appendElement(fragment, { 
+      classes: ['item', 'empty'],
+      text: '<h2>You have no workspace</h2>Create a new workspace to continue.'
+    });
 
     document.getElementById('container-workspaces-content').innerHTML = '';
     document.getElementById('container-workspaces-content').appendChild(fragment);
-    // return Promise.resolve();
   }
 });
 
 Logic.registerSection('workspace', {
   sectionId: 'container-workspace',
   renderStatic () {
-    document.getElementById('workspace-back-button').addEventListener('click', () => { 
-      Logic.showSection('workspaces'); 
-    });
+    document.getElementById('workspace-back-button').addEventListener('click', () => Logic.showSection('workspaces'));
   },
   async render () {
     const workspace = Logic.currentWorkspace();
@@ -394,12 +394,10 @@ Logic.registerSection('workspace', {
     });
 
     // Empty item
-    if (!tabs.length) {
-      const emptyItem = document.createElement('div');
-      emptyItem.classList.add('item', 'empty');
-      emptyItem.innerHTML = 'This workspace contains no tabs';
-      fragment.appendChild(emptyItem);
-    }
+    if (!tabs.length) appendElement(fragment, {
+      classes: ['item', 'empty'],
+      text: 'This workspace contains no tabs'
+    });
 
     document.getElementById('container-workspace-tablist').innerHTML = '';
     document.getElementById('container-workspace-tablist').appendChild(fragment);
@@ -428,10 +426,9 @@ Logic.registerSection('workspace-form', {
     document.getElementById('workspace-submit-button').innerHTML = id ? 'Save' : 'Create';
     document.getElementById('workspace-form').addEventListener('submit', async event => { 
       event.preventDefault();
-      if (!event.target.elements[0].value) return;
-      // TODO: Extract to Logic
-      const { id: wsId } = await browser.runtime.sendMessage({ type: 'CREATE_OR_EDIT_WORKSPACE', workspace: { ...workspace, title: event.target.elements[0].value } });
-      Logic.msg('Workspace ' + (id ? 'saved!' : 'created!'));
+      // TODO: Implement proper validation
+      if (!event.target.elements[0].value) return; 
+      const wsId = await Logic.submitWorkspace({ ...workspace, title: event.target.elements[0].value });
       Logic.showSection('workspace', { wsId }); 
     });
   }

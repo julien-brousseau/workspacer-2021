@@ -1,0 +1,45 @@
+.item {
+  display: flex;
+  align-items: center;
+  align-content: center;
+  align-items: flex-start;
+  padding: $item-padding;
+  border-bottom: 1px solid $item-border-color !important;
+
+  &.clickable {
+    cursor: pointer;
+  }
+
+  &:hover {
+    background-color: $item-background !important;
+  }
+  
+  h2 {
+    margin: auto auto auto 5px;
+    font-size: $item-title-size;
+    font-weight: 500;
+  }
+
+  &.empty {
+    flex-direction: column;
+    align-items: center;
+    padding: 30px;
+    text-align: center;
+
+    &:hover {
+      background: none !important;
+    }
+
+    h2 {
+      margin: auto;
+    }
+  }
+
+  &.static:hover {
+    background: none !important;
+  }
+
+  .label {
+    margin: 7px 0px auto 0px !important;
+  }
+}

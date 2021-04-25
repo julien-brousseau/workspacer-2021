@@ -1,0 +1,40 @@
+.container-header {
+  display: flex;
+  align-content: center;
+  align-items: flex-start;
+  padding: $app-padding;
+  color: #AAA;
+  background-color: $header-background-color;
+  border-bottom: 1px solid $header-border-color;
+
+  &.home {
+    padding-left: 20px !important;
+  }
+  
+  h1 {
+    margin: auto;
+    margin-left: 0px;
+    box-shadow: none;
+    font-size: $header-title-size;
+    font-weight: 500;
+  }
+
+  .button{
+    .primary {
+      font-weight: 600;
+    }
+    
+    &.ghost {
+      box-shadow: none !important;
+      color: #888 !important;
+      border: 0px none !important;
+
+      &:hover {
+        box-shadow: none !important;
+        color: white !important;
+        background: none !important;
+        border: 0px none !important;
+      }
+    }
+  }
+}

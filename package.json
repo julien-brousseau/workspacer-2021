@@ -3,12 +3,18 @@
   "version": "1.2.0",
   "description": "",
   "main": "popup.html",
-  "scripts": {},
+  "scripts": {
+    "sass": "gulp sass:watch"
+  },
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "eslint": "^7.17.0",
     "eslint-plugin-html": "^6.1.2",
-    "webextension-polyfill": "^0.7.0"
+    "gulp": "^4.0.2",
+    "gulp-clean-css": "^4.3.0",
+    "gulp-concat": "^2.6.1",
+    "gulp-sass": "^4.1.0",
+    "node-sass": "^5.0.0"
   }
 }

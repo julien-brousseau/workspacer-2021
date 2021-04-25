@@ -1,0 +1,49 @@
+body {
+  width: $app-width;
+  min-height: $app-min-height;
+  margin: 0px; 
+  padding: 0px;
+
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  /* font-family: Avenir, Helvetica, Arial, sans-serif; */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: $text-color;
+}
+
+form {
+  padding: 15px;
+}
+
+form .field {
+  margin-bottom: 15px !important;
+}
+
+#msg {
+  position: absolute;
+  top: -3px;
+  width: 100%;
+  padding-left: 100px;
+  padding-right: 140px;
+  text-align: center;
+}
+#msg .label {
+  width: auto; 
+  max-width: 180px;
+}
+
+.hide {
+  display: none !important;
+}
+
+.container {
+  min-height: 100%;
+}
+
+/* Scrollbar padding */
+.container-header, 
+.item, 
+#container-workspace-controls {
+  padding-left: calc(#{$app-scrollbar-width} / 2) !important;
+  padding-right: $app-scrollbar-width !important;
+}
