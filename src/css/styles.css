@@ -19,13 +19,12 @@ form .field {
   position: absolute;
   top: -3px;
   width: 100%;
-  padding-left: 100px;
-  padding-right: 140px;
   text-align: center; }
 
 #msg .label {
   width: auto;
-  max-width: 180px; }
+  text-align: center;
+  max-width: calc(600px / 2); }
 
 .hide {
   display: none !important; }
@@ -136,6 +135,27 @@ form .field {
   #container-workspace-controls h3 {
     margin: auto;
     margin-left: 6px; }
+
+#container-confirm-content {
+  padding: 30px; }
+  #container-confirm-content * {
+    text-align: center; }
+  #container-confirm-content strong {
+    color: red; }
+  #container-confirm-content p {
+    font-size: 16px; }
+  #container-confirm-content ul {
+    list-style: none;
+    padding: 10px 0px; }
+  #container-confirm-content li {
+    border-bottom: 1px solid #CCC;
+    padding: 10px; }
+    #container-confirm-content li:last-child {
+      border: 0px none; }
+  #container-confirm-content .warning {
+    font-size: 16px;
+    color: red;
+    margin-top: 25px; }
 
 #container-settings-content .item {
   padding: 20px;

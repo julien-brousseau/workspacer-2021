@@ -36,6 +36,7 @@
             <div class="menu">
               <div class="item" id="workspace-add-current-tab-button" title="Add current tab to workspace">Current tab</div>
               <div class="item" id="workspace-add-all-tabs-button" title="Add all tabs from current window">Current window</div>
+              <div class="item" id="workspace-replace-tabs-button" title="Replace all tabs with current window">Replace all tabs</div>
             </div>
           </div>
           
@@ -132,7 +133,25 @@
       </div>
     </div>
 
-    <script src="js/lib/jquery-3.6.0.js"></script>
+    <!-- Confirmation -->
+    <div id="container-confirm" class="container hide">
+      <div id="container-confirm-header" class="container-header">
+        <button id="confirm-back-button" class="ui basic ghost icon back button" title="Cancel"><i class="chevron left icon"></i></button>
+        <h1></h1>
+      </div>
+
+      <div id="container-confirm-content">
+        <h2 id="confirm-title">Blop</h2>
+        <p id="confirm-text">Blop</p>
+        <div>
+          <button id="confirm-accept-button" class="ui red button" title="">Confirm</button>
+          <button id="confirm-cancel-button" class="ui secondary button" title="">Cancel</button>
+        </div>
+        <p class="warning">Warning: This operation is irreversible</p>
+      </div>
+    </div>
+
+    <script src="js/lib/jquery-3.6.0.min.js"></script>
     <script src="js/lib/semantic.min.js"></script>
     <script type="module" src="js/popup.js"></script>
 

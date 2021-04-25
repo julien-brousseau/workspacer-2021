@@ -72,6 +72,12 @@ const Logic = {
       this._currentWorkspace = this._currentTab.wsId;
     }
 
+    await this.renderSection(sectionName);
+
+  },
+
+  // 
+  async renderSection (sectionName) {
     // Set and render current section
     const section = this._sections[sectionName];
     await section.render();
@@ -87,6 +93,8 @@ const Logic = {
     // Un-hide current section
     const sectionSelector = document.getElementById(section.sectionId);
     sectionSelector.classList.remove('hide');
+
+    return sectionSelector;
   },
 
   // Register and render static elements
@@ -109,6 +117,44 @@ const Logic = {
 
     clearTimeout(this._msgTimeout);
     this._msgTimeout = setTimeout(() => el.classList.add('hide'), 2500);
+  },
+
+  // Show a shallow Confirm section and returns user action as boolean
+  async confirm (method, { workspace: ws } = {}) {
+    // Shallow render
+    await this.renderSection('confirm');
+      
+    // DOM list helper
+    const list = (tabs) => '<ul>' + tabs.map(t => '<li>' + t.title + '</li>').join('') + '</ul>';
+    
+    // Await user choice
+    let ok = null;
+    const timeout = async ms => new Promise(res => setTimeout(res, ms));
+    async function awaitConfirm () {
+      while (ok === null) await timeout(50); 
+    }
+
+    // Content
+    const titles = {
+      deleteWorkspace: 'Delete workspace',
+      deleteWorkspaces: 'Delete all workspaces',
+      deleteTabs: 'Delete tabs',
+      replaceTabs: 'Replace tabs'
+    };
+    let text = 
+      method === 'deleteWorkspace' ? 'Do you want to <strong>permanently delete</strong> the workspace ' + ws.title + ', along with the following tabs?' + list(ws.tabs) : 
+      method === 'deleteWorkspaces' ? 'Do you want to <strong>permanently delete</strong> all the following workspaces?' + list(this.workspaces()) : 
+      method === 'deleteTabs' ? 'Do you want to <strong>permanently delete</strong> all the following tabs?' + list(ws.tabs) :
+      method === 'replaceTabs' ? 'Do you want to <strong>permanently replace</strong> all the following tabs with the current window?' + list(ws.tabs) : null;
+    document.getElementById('confirm-title').innerHTML = titles[method];
+    document.getElementById('confirm-text').innerHTML = text;
+
+    // Button listeners
+    document.getElementById('confirm-accept-button').addEventListener('click', () => { ok = true; });
+    document.getElementById('confirm-cancel-button').addEventListener('click', () => { ok = false; });
+
+    await awaitConfirm();
+    return ok;
   },
 
   // Swap tab positions
@@ -308,6 +354,15 @@ Logic.registerSection('workspace', {
       await Logic.addCurrentTab(workspace, true);
       Logic.showSection('workspace', { wsId }); 
     });
+    removeListeners('workspace-replace-tabs-button');
+    document.getElementById('workspace-replace-tabs-button').addEventListener('click', async () => { 
+      const confirmed = tabs.length ? await Logic.confirm('replaceTabs', { workspace }) : true;
+      if (confirmed) {
+        await Logic.deleteTabs(tabs);
+        await Logic.addCurrentTab(workspace, true);
+      }
+      Logic.showSection('workspace', { wsId }); 
+    });
     removeListeners('workspace-open-in-new-window-button');
     document.getElementById('workspace-open-in-new-window-button').addEventListener('click', () => { 
       Logic.openTabs(tabs);
@@ -322,13 +377,22 @@ Logic.registerSection('workspace', {
     });
     removeListeners('workspace-delete-tabs-button');
     document.getElementById('workspace-delete-tabs-button').addEventListener('click', async () => { 
-      await Logic.deleteTabs(tabs);
+      if (!tabs.length) return Logic.msg('No tabs to delete', 'red');
+      const confirmed = await Logic.confirm('deleteTabs', { workspace }); 
+      if (confirmed) {
+        await Logic.deleteTabs(tabs);
+      }
       Logic.showSection('workspace', { wsId }); 
     });
     removeListeners('workspace-delete-button');
     document.getElementById('workspace-delete-button').addEventListener('click', async () => { 
-      await Logic.deleteWorkspace(wsId);
-      Logic.showSection('workspaces'); 
+      const confirmed = await Logic.confirm('deleteWorkspace', { workspace }); 
+      if (confirmed) {
+        await Logic.deleteWorkspace(wsId);
+        Logic.showSection('workspaces'); 
+      } else {
+        Logic.showSection('workspace', { wsId }); 
+      }
     });
 
     // Tab list
@@ -479,10 +543,16 @@ Logic.registerSection('settings', {
       Logic.showSection('workspaces'); 
     });
     document.getElementById('delete-all-workspaces-button').addEventListener('click', async () => { 
-      // TODO: Extract to Logic
-      await browser.runtime.sendMessage({ type: 'CLEAR_WORKSPACES' }); 
-      Logic.msg('User data cleared!', 'red');
-      Logic.showSection('workspaces'); 
+      if (!Logic.workspaces().length) return Logic.msg('You have no workspaces', 'red');
+      const confirmed = await Logic.confirm('deleteWorkspaces'); 
+      if (confirmed) {
+        // TODO: Extract to Logic
+        await browser.runtime.sendMessage({ type: 'CLEAR_WORKSPACES' }); 
+        Logic.msg('User data cleared!', 'red');
+        Logic.showSection('workspaces'); 
+      } else {
+        Logic.showSection('settings'); 
+      }
     });
   },
   async render () {
@@ -528,6 +598,12 @@ Logic.registerSection('settings', {
       }
     });
   }
+});
+
+Logic.registerSection('confirm', {
+  sectionId: 'container-confirm',
+  renderStatic () {},
+  async render () {}
 });
 
 Logic.showSection('workspaces');

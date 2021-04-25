@@ -1,0 +1,35 @@
+
+#container-confirm-content {
+  padding: 30px;
+
+  * {
+    text-align: center;
+  }
+
+  strong {
+    color: red;
+  }
+
+  p {
+    font-size: 16px;
+  }
+
+  ul {
+    list-style: none;
+    padding: 10px 0px;
+  }
+
+  li {
+    border-bottom: 1px solid #CCC;
+    padding: 10px;
+    &:last-child {
+      border: 0px none;
+    }
+  }
+
+  .warning {
+    font-size: 16px;
+    color: red;
+    margin-top: 25px;
+  }
+}
