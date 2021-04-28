@@ -28,7 +28,10 @@
         <h1>Workspace info</h1>
       </div>
       <div id="container-workspace-controls" style="padding: 10px;">
-        <h3 id="workspace-title">WORKSPACE</h3>
+        <i id="workspace-title-icon" class="icon"></i>
+        <h3 id="workspace-title">
+          WORKSPACE
+        </h3>
         <!-- Controls -->
         <div class="ui icon buttons">
           <div class="ui green icon top center pointing dropdown button" title="Add tabs to this workspace">
@@ -72,6 +75,10 @@
           <div class="field">
             <label>Workspace name</label>
             <input id="workspace-form-title" name="title" type="text" placeholder="Ex: School">
+          </div>
+          <div class="field">
+            <label>Icon</label>
+            <div id="workspace-form-icons"></div>
           </div>
           <button id="workspace-submit-button" class="ui secondary button" type="submit" title="Save">Create</button>
         </form>

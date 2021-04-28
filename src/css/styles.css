@@ -1,6 +1,9 @@
+html {
+  height: auto;
+  min-height: 250px; }
+
 body {
   width: 600px;
-  min-height: 600px;
   margin: 0px;
   padding: 0px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -14,6 +17,21 @@ form {
 
 form .field {
   margin-bottom: 15px !important; }
+
+#workspace-form-icons {
+  display: flex;
+  flex-wrap: wrap; }
+  #workspace-form-icons .ico-label i {
+    color: #DDD;
+    font-size: 26px;
+    cursor: pointer;
+    margin: 10px; }
+    #workspace-form-icons .ico-label i:hover {
+      color: #AAA; }
+  #workspace-form-icons input[type="radio"].ico {
+    display: none; }
+    #workspace-form-icons input[type="radio"].ico:checked + .ico-label i {
+      color: #3ac1ff; }
 
 #msg {
   position: absolute;
@@ -31,6 +49,10 @@ form .field {
 
 .container {
   min-height: 100%; }
+
+.icon.large {
+  margin-top: 7px;
+  font-size: 24px; }
 
 /* Scrollbar padding */
 .container-header,

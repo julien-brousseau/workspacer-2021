@@ -121,19 +121,14 @@ const Logic = {
 
   // Show a shallow Confirm section and returns user action as boolean
   async confirm (method, { workspace: ws } = {}) {
+    let ok = null;
+
+    // DOM list helper
+    const list = (tabs) => '<ul>' + tabs.map(t => '<li>' + t.title + '</li>').join('') + '</ul>';
+
     // Shallow render
     await this.renderSection('confirm');
       
-    // DOM list helper
-    const list = (tabs) => '<ul>' + tabs.map(t => '<li>' + t.title + '</li>').join('') + '</ul>';
-    
-    // Await user choice
-    let ok = null;
-    const timeout = async ms => new Promise(res => setTimeout(res, ms));
-    async function awaitConfirm () {
-      while (ok === null) await timeout(50); 
-    }
-
     // Content
     const titles = {
       deleteWorkspace: 'Delete workspace',
@@ -141,11 +136,13 @@ const Logic = {
       deleteTabs: 'Delete tabs',
       replaceTabs: 'Replace tabs'
     };
+
     let text = 
       method === 'deleteWorkspace' ? 'Do you want to <strong>permanently delete</strong> the workspace ' + ws.title + ', along with the following tabs?' + list(ws.tabs) : 
       method === 'deleteWorkspaces' ? 'Do you want to <strong>permanently delete</strong> all the following workspaces?' + list(this.workspaces()) : 
       method === 'deleteTabs' ? 'Do you want to <strong>permanently delete</strong> all the following tabs?' + list(ws.tabs) :
       method === 'replaceTabs' ? 'Do you want to <strong>permanently replace</strong> all the following tabs with the current window?' + list(ws.tabs) : null;
+
     document.getElementById('confirm-title').innerHTML = titles[method];
     document.getElementById('confirm-text').innerHTML = text;
 
@@ -153,7 +150,11 @@ const Logic = {
     document.getElementById('confirm-accept-button').addEventListener('click', () => { ok = true; });
     document.getElementById('confirm-cancel-button').addEventListener('click', () => { ok = false; });
 
+    // Await user choice
+    const timeout = async t => new Promise(res => setTimeout(res, t));
+    async function awaitConfirm () { while (ok === null) await timeout(50); }
     await awaitConfirm();
+
     return ok;
   },
 
@@ -246,14 +247,20 @@ function removeListeners (id) {
 }
 
 // Generate, attach and returns a DOM node
-function appendElement (parent, { tag = 'div', classes = [], text = '', title = '', src = null } = {}) {
+function appendElement (parent, { tag = 'div', classes = [], text = '', title = '', src = null, type = null, id = null, _for = null, value = null, name = null } = {}) {
   const element = document.createElement(tag);
   element.innerHTML = text;
   element.title = title;
 
   element.classList.add(...classes.filter(c => c && c !== ''));
 
+  // TODO: Use destructuring
+  if (id) element.id = id;
   if (src) element.src = src;
+  if (type) element.type = type;
+  if (_for) element.setAttribute('for', _for);
+  if (value) element.value = value;
+  if (name) element.name = name;
 
   parent.appendChild(element);
   return element;
@@ -272,20 +279,24 @@ Logic.registerSection('workspaces', {
     const workspaces = Logic.workspaces();
 
     const fragment = document.createDocumentFragment();
-    workspaces.forEach((workspace) => {
-      const { id: wsId, title, tabs } = workspace;
+    workspaces.forEach(workspace => {
+      const { id: wsId, title, tabs, icon } = workspace;
 
       // Item container
       const container = appendElement(fragment, { classes: ['item', 'clickable']});
       container.addEventListener('click', () => Logic.showSection('workspace', { wsId }));
 
       // Tab count label
-      const nbTabs = tabs.length;
-      appendElement(container, { 
-        text: nbTabs,
-        classes: ['ui', 'tiny', 'basic', 'circular', 'label'],
-        title: `This worspace contains ${ nbTabs || 'no' } tab${ nbTabs > 1 ? 's' : '' }`
-      });
+      // const nbTabs = tabs.length;
+      // appendElement(container, { 
+      //   text: nbTabs,
+      //   classes: ['ui', 'tiny', 'basic', 'circular', 'label'],
+      //   title: `This worspace contains ${ nbTabs || 'no' } tab${ nbTabs > 1 ? 's' : '' }`
+      // });
+
+      // Icon
+      appendElement(container, { tag: 'i', classes: [...icon.split('-'), 'icon', 'large']});
+
       // Workspace title
       appendElement(container, { 
         tag: 'h2', 
@@ -337,11 +348,17 @@ Logic.registerSection('workspace', {
   },
   async render () {
     const workspace = Logic.currentWorkspace();
-    const { id: wsId, title, tabs } = workspace;
+    const { id: wsId, title, tabs, icon } = workspace;
     if (DEBUG) console.log('Current workspace :>> ', workspace);
 
+    // Title
     const fragment = document.createDocumentFragment();
     document.getElementById('workspace-title').innerHTML = title;
+
+    // Icon
+    const i = document.getElementById('workspace-title-icon');
+    i.classList.remove(...i.classList);
+    i.classList.add(...icon.split('-'), 'icon', 'large');
 
     // Static buttons
     removeListeners('workspace-add-current-tab-button');
@@ -478,12 +495,39 @@ Logic.registerSection('workspace-form', {
   async render () {
     const workspace = Logic.currentWorkspace() || {};
     const { id, title } = workspace;
+    const icons = ['headphones', 'rss', 'book', 'certificate', 'calendar alternate outline', 'chart bar outline', 
+      'compass', 'folder outline', 'pencil alternate', 'tag', 'shield alternate', 'comments', 'paper plane', 'server', 
+      'tv', 'dollar sign', 'eye slash outline', 'tint', 'file outline', 'heart outline', 'calculator', 'cloud', 'flag outline', 'user outline'];
     
     // Title
     document.getElementById('workspace-form-header-title').innerHTML = id ? 'Edit existing workspace' : 'Create new workspace';
     
     // Fields
     document.getElementById('workspace-form-title').value = id ? title : '';
+
+    // Icon picker
+    const iconList = document.getElementById('workspace-form-icons');
+    iconList.innerHTML = '';
+    icons.forEach(i => {
+      const _i = i.replaceAll(' ', '-');
+
+      const checkbox = appendElement(iconList, { 
+        tag: 'input', 
+        id: 'ico-' + _i, 
+        type: 'radio', 
+        name: 'icon-list', 
+        classes: ['ico'], 
+        value: _i
+      });
+      const label = appendElement(iconList, { 
+        tag: 'label', 
+        _for: 'ico-' + _i, 
+        classes: ['ico-label'], 
+        title: i 
+      });
+      label.innerHTML = '<i class="' + i + ' icon"></i>';
+      if (workspace.icon === _i) checkbox.setAttribute('checked', 'checked');
+    });
     
     // Submit button
     removeListeners('workspace-form');
@@ -492,7 +536,9 @@ Logic.registerSection('workspace-form', {
       event.preventDefault();
       // TODO: Implement proper validation
       if (!event.target.elements[0].value) return; 
-      const wsId = await Logic.submitWorkspace({ ...workspace, title: event.target.elements[0].value });
+      const title = event.target.elements[0].value;
+      const icon = document.querySelector('input[name="icon-list"]:checked').value;
+      const wsId = await Logic.submitWorkspace({ ...workspace, title, icon });
       Logic.showSection('workspace', { wsId }); 
     });
   }

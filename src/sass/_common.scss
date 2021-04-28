@@ -1,6 +1,11 @@
+html {
+  height: auto;
+  min-height: 250px; 
+  // min-height: $app-min-height;
+}
+
 body {
   width: $app-width;
-  min-height: $app-min-height;
   margin: 0px; 
   padding: 0px;
 
@@ -17,6 +22,29 @@ form {
 
 form .field {
   margin-bottom: 15px !important;
+}
+
+#workspace-form-icons {
+  display: flex;
+  flex-wrap: wrap;
+
+  .ico-label i {
+    color: #DDD;
+    font-size: 26px;
+    cursor: pointer;
+    margin: 10px;
+    &:hover {
+      color: #AAA;
+    }
+  }
+  
+  input[type="radio"].ico {
+    display: none;
+    &:checked + .ico-label i {
+      color: $primary;
+    }
+  }
+
 }
 
 #msg {
@@ -39,6 +67,11 @@ form .field {
   min-height: 100%;
 }
 
+.icon.large {
+  margin-top: 7px;
+  font-size: 24px;
+}
+
 /* Scrollbar padding */
 .container-header, 
 .item, 
@@ -46,3 +79,4 @@ form .field {
   padding-left: calc(#{$app-scrollbar-width} / 2) !important;
   padding-right: $app-scrollbar-width !important;
 }
+

@@ -18,6 +18,11 @@ export const schema = () => {
         dataType: 'string',
         // notNull: true
       },
+      icon: {
+        dataType: 'string',
+        notNull: true,
+        default: 'circle'
+      },
     },
   };
   const tabs_table = {
