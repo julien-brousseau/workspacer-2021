@@ -1,9 +1,9 @@
 html {
   height: auto;
-  min-height: 250px; }
+  height: 500px; }
 
 body {
-  width: 600px;
+  width: 500px;
   margin: 0px;
   padding: 0px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -42,10 +42,13 @@ form .field {
 #msg .label {
   width: auto;
   text-align: center;
-  max-width: calc(600px / 2); }
+  max-width: calc(500px / 2); }
 
 .hide {
   display: none !important; }
+
+.hidden {
+  visibility: hidden !important; }
 
 .container {
   min-height: 100%; }
@@ -65,6 +68,7 @@ form .field {
   display: flex;
   align-content: center;
   align-items: flex-start;
+  height: 50px;
   padding: 5px;
   color: #AAA;
   background-color: #1b1c1d;
@@ -98,8 +102,12 @@ form .field {
   border-bottom: 1px solid #EEEEEE !important; }
   .item.clickable {
     cursor: pointer; }
+  .item .buttons {
+    visibility: hidden; }
   .item:hover {
     background-color: #FAFAFA !important; }
+    .item:hover .buttons {
+      visibility: visible; }
   .item h2 {
     margin: auto auto auto 5px;
     font-size: 16px;

@@ -203,6 +203,17 @@ const Logic = {
     return;
   },
   //
+  async deleteWorkspaces (wsId) {
+    const confirmed = await this.confirm('deleteWorkspaces'); 
+    if (confirmed) {
+      await browser.runtime.sendMessage({ type: 'CLEAR_WORKSPACES' }); 
+      this.msg('User data cleared!', 'red');
+      this.showSection('workspaces'); 
+    } else {
+      Logic.showSection('settings'); 
+    }
+  },
+  //
   async deleteWorkspace (wsId) {
     await browser.runtime.sendMessage({ type: 'DELETE_WORKSPACE', wsId });
     Logic.msg('Workspace deleted', 'red');
@@ -247,7 +258,8 @@ function removeListeners (id) {
 }
 
 // Generate, attach and returns a DOM node
-function appendElement (parent, { tag = 'div', classes = [], text = '', title = '', src = null, type = null, id = null, _for = null, value = null, name = null } = {}) {
+function appendElement (parent, { tag = 'div', classes = [], text = '', style = null,
+  title = '', src = null, type = null, id = null, _for = null, value = null, name = null } = {}) {
   const element = document.createElement(tag);
   element.innerHTML = text;
   element.title = title;
@@ -261,6 +273,7 @@ function appendElement (parent, { tag = 'div', classes = [], text = '', title = 
   if (_for) element.setAttribute('for', _for);
   if (value) element.value = value;
   if (name) element.name = name;
+  if (style) element.style = `{${style}}`;
 
   parent.appendChild(element);
   return element;
@@ -295,7 +308,12 @@ Logic.registerSection('workspaces', {
       // });
 
       // Icon
-      appendElement(container, { tag: 'i', classes: [...icon.split('-'), 'icon', 'large']});
+      const nbTabs = tabs.length;
+      appendElement(container, { 
+        tag: 'i', 
+        classes: [...icon.split('-'), 'icon', 'large'],
+        title: `This worspace contains ${ nbTabs || 'no' } tab${ nbTabs > 1 ? 's' : '' }`
+      });
 
       // Workspace title
       appendElement(container, { 
@@ -417,6 +435,13 @@ Logic.registerSection('workspace', {
       const { title, tabId, favIconUrl: icon, pinned } = tab;
       const container = appendElement(fragment, { classes: ['item', 'tab']});
 
+      // Append pin icon
+      appendElement(container, { 
+        tag: 'i',
+        classes: ['favIcon', 'icon', 'pin', pinned ? '' : 'hidden'],
+        style: 'color:red',
+        title: 'This tab is pinned'
+      });
       // Append favicon image or placeholder
       appendElement(container, { 
         tag: icon ? 'img' : 'div',
@@ -590,15 +615,7 @@ Logic.registerSection('settings', {
     });
     document.getElementById('delete-all-workspaces-button').addEventListener('click', async () => { 
       if (!Logic.workspaces().length) return Logic.msg('You have no workspaces', 'red');
-      const confirmed = await Logic.confirm('deleteWorkspaces'); 
-      if (confirmed) {
-        // TODO: Extract to Logic
-        await browser.runtime.sendMessage({ type: 'CLEAR_WORKSPACES' }); 
-        Logic.msg('User data cleared!', 'red');
-        Logic.showSection('workspaces'); 
-      } else {
-        Logic.showSection('settings'); 
-      }
+      Logic.deleteWorkspaces();
     });
   },
   async render () {

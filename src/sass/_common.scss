@@ -1,6 +1,6 @@
 html {
   height: auto;
-  min-height: 250px; 
+  height: $app-height; 
   // min-height: $app-min-height;
 }
 
@@ -63,6 +63,11 @@ form .field {
   display: none !important;
 }
 
+.hidden {
+  visibility: hidden !important;
+}
+
+// Section wrapper
 .container {
   min-height: 100%;
 }

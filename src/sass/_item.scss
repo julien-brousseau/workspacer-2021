@@ -9,9 +9,16 @@
   &.clickable {
     cursor: pointer;
   }
+  
+  .buttons {
+    visibility: hidden;
+  }
 
   &:hover {
     background-color: $item-background !important;
+    .buttons {
+      visibility: visible;
+    }
   }
   
   h2 {
