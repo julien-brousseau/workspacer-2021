@@ -15,18 +15,21 @@
     background-color: $item-background;
   }
 
-  .buttons {
-    margin-left: auto;
+  // .buttons {
+  //   margin-left: auto;
+  //   position: absolute;
+  //   right: 20px;
+  //   background-color: white;
   
-    button.ui.button.pinned {
-      color: $btn-pinned-color !important;
-      background-color: $btn-pinned-background !important;
-    }
+  //   button.ui.button.pinned {
+  //     color: $btn-pinned-color !important;
+  //     background-color: $btn-pinned-background !important;
+  //   }
 
-    button.ui.button.pinned:hover {
-      background-color: $btn-pinned-hover-background !important;
-    }
-  }
+  //   button.ui.button.pinned:hover {
+  //     background-color: $btn-pinned-hover-background !important;
+  //   }
+  // }
 
   &:first-child button.ui.button.move-up, 
   &:last-child button.ui.button.move-down {

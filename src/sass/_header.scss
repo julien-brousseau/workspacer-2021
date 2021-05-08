@@ -3,7 +3,7 @@
   align-content: center;
   align-items: flex-start;
   height: $header-height;
-  padding: $app-padding;
+  // padding: $app-padding;
   color: #AAA;
   background-color: $header-background-color;
   border-bottom: 1px solid $header-border-color;
@@ -20,22 +20,23 @@
     font-weight: 500;
   }
 
-  .button{
-    .primary {
-      font-weight: 600;
-    }
+  // .button{
+    // height: 36px;
+    // .primary {
+    //   font-weight: 600;
+    // }
     
-    &.ghost {
-      box-shadow: none !important;
-      color: #888 !important;
-      border: 0px none !important;
+    // &.ghost {
+    //   box-shadow: none !important;
+    //   color: #888 !important;
+    //   border: 0px none !important;
 
-      &:hover {
-        box-shadow: none !important;
-        color: white !important;
-        background: none !important;
-        border: 0px none !important;
-      }
-    }
-  }
+    //   &:hover {
+    //     box-shadow: none !important;
+    //     color: white !important;
+    //     background: none !important;
+    //     border: 0px none !important;
+    //   }
+    // }
+  // }
 }

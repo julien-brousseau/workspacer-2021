@@ -4,6 +4,7 @@ $app-padding: 5px;
 $app-scrollbar-width: 20px;
 
 $primary: #3ac1ff;
+$secondary: #1f3742;
 
 $text-color: #2C3E50;
 
@@ -14,7 +15,8 @@ $header-background-color: #1b1c1d;
 
 $footer-height: 30px;
 
-$item-padding: 10px 0px;
+$item-height: 50px;
+// $item-padding: 10px 0px;
 $item-background: #FAFAFA;
 $item-border-color: #EEEEEE;
 $item-title-size: 16px;
@@ -25,3 +27,5 @@ $btn-disabled-background: #FEFEFE;
 $btn-pinned-color: #FEFEFE;
 $btn-pinned-background: #1b1c1d;
 $btn-pinned-hover-background: #4b4d4e;
+
+$btn-ghost-color: #888;

@@ -1,0 +1,38 @@
+.ui.buttons {
+  height: 100%;
+  margin: 0px;
+  border-radius: 0px;
+
+  .button {
+    width: $item-height;
+    padding: 0px;
+    border-left: 1px solid $item-border-color;
+    border-radius: 0px;
+    
+    // &:last-child {
+    //   border-right: 1px solid $item-border-color;
+    // }
+      
+  &.ghost {
+    // border: 1px solid red;
+    // width: 40px;
+    // height: 100%;
+    background: none;
+    color: $btn-ghost-color;
+
+    &:hover, &:focus, &:active {
+      background: none;
+      color: white;
+      &.primary {
+        background-color: $primary;
+      }
+      &.secondary {
+        background-color: $secondary;
+      }
+      i {
+        font-size: 125%;
+      }
+    }
+  }
+  }
+}

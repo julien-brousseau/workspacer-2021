@@ -307,7 +307,7 @@ Logic.registerSection('workspaces', {
       //   title: `This worspace contains ${ nbTabs || 'no' } tab${ nbTabs > 1 ? 's' : '' }`
       // });
 
-      // Icon
+      // Favicon
       const nbTabs = tabs.length;
       appendElement(container, { 
         tag: 'i', 
@@ -329,7 +329,7 @@ Logic.registerSection('workspaces', {
       appendElement(btnGroup, { 
         tag: 'button',
         text: '<i class="plus icon"></i>',
-        classes: ['ui', 'basic', 'green', 'button'],
+        classes: ['ui', 'ghost', 'button', 'primary'],
         title: 'Add current tab',
       }).addEventListener('click', async event => { 
           event.stopPropagation();
@@ -340,7 +340,7 @@ Logic.registerSection('workspaces', {
       appendElement(btnGroup, { 
         tag: 'button',
         text: '<i class="external alternate icon"></i>',
-        classes: ['ui', 'basic', 'orange', 'button'],
+        classes: ['ui', 'ghost', 'button', 'secondary'],
         title: 'Open in new window',
       }).addEventListener('click', event => { 
           event.stopPropagation();
@@ -463,35 +463,35 @@ Logic.registerSection('workspace', {
       appendElement(btnGroup, { 
         tag: 'button',
         text: '<i class="caret up icon"></i>',
-        classes: ['ui', 'button', 'move-up'],
+        classes: ['ui', 'ghost', 'button', 'move-up'],
         title: 'Move up'
       }).addEventListener('click', () => Logic.moveTab(tab, 'up')); 
       // Move down
       appendElement(btnGroup, { 
         tag: 'button',
         text: '<i class="caret down icon"></i>',
-        classes: ['ui', 'button', 'move-down'],
+        classes: ['ui', 'ghost', 'button', 'move-down'],
         title: 'Move down'
       }).addEventListener('click', () => Logic.moveTab(tab, 'down')); 
       // Pin
       appendElement(btnGroup, {
         tag: 'button',
         text: '<i class="pin icon"></i>',
-        classes: ['ui', 'button', pinned ? 'pinned' : ''],
+        classes: ['ui', 'ghost', 'button', pinned ? 'pinned' : ''],
         title: pinned ? 'Unpin tab' : 'Pin tab'
       }).addEventListener('click', () => Logic.pinTab(tab)); 
       // Modify
       appendElement(btnGroup, {
         tag: 'button',
         text: '<i class="pencil icon"></i>',
-        classes: ['ui', 'button'],
+        classes: ['ui', 'ghost', 'button'],
         title: 'Modify tab info'
       }).addEventListener('click', () => Logic.showSection('tab-form', { tabId })); 
       // Delete
       appendElement(btnGroup, {
         tag: 'button',
         text: '<i class="trash icon"></i>',
-        classes: ['ui', 'button'],
+        classes: ['ui', 'ghost', 'button'],
         title: 'Delete this tab'
       }).addEventListener('click', async () => {
           await Logic.deleteTabs(tab);
