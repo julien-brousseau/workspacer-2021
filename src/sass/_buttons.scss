@@ -1,38 +1,39 @@
-.ui.buttons {
-  height: 100%;
+$icon-hover-size: 120%;
+
+.ui.button {
+  width: $item-height;
+  height: $item-height;
   margin: 0px;
+  padding: 0px;
+  border: 0px none;
   border-radius: 0px;
 
-  .button {
-    width: $item-height;
+  &.icon {
     padding: 0px;
+    i { margin: 0px; }  
+  }
+
+  // Part of a series of buttons
+  &.chain {
     border-left: 1px solid $item-border-color;
-    border-radius: 0px;
-    
-    // &:last-child {
-    //   border-right: 1px solid $item-border-color;
-    // }
-      
+  }
+  
+  // Only icon visible
   &.ghost {
-    // border: 1px solid red;
-    // width: 40px;
-    // height: 100%;
     background: none;
     color: $btn-ghost-color;
-
-    &:hover, &:focus, &:active {
-      background: none;
-      color: white;
-      &.primary {
-        background-color: $primary;
-      }
-      &.secondary {
-        background-color: $secondary;
-      }
-      i {
-        font-size: 125%;
-      }
-    }
   }
+
+  &.cta {
+    color: $primary;
+    font-size: 160% !important;
+  }
+
+  &:hover, &:focus, &:active {
+    &.icon { padding-top: 3px; }
+    &.chain { background: #DDD; }
+    &.primary { background-color: $primary; }
+    &.secondary { background-color: $secondary; }
+    i { font-size: $icon-hover-size; }
   }
 }

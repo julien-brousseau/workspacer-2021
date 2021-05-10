@@ -53,37 +53,36 @@ form .field {
 .container {
   min-height: 100%; }
 
-.icon.large {
-  font-size: 24px; }
-
 /* Scrollbar padding */
-.container-header,
-.item,
-#container-workspace-controls {
-  padding-left: calc(20px / 2) !important;
-  padding-right: 20px !important; }
-
-.ui.buttons {
-  height: 100%;
+.ui.button {
+  width: 50px;
+  height: 50px;
   margin: 0px;
+  padding: 0px;
+  border: 0px none;
   border-radius: 0px; }
-  .ui.buttons .button {
-    width: 50px;
-    padding: 0px;
-    border-left: 1px solid #EEEEEE;
-    border-radius: 0px; }
-    .ui.buttons .button.ghost {
-      background: none;
-      color: #888; }
-      .ui.buttons .button.ghost:hover, .ui.buttons .button.ghost:focus, .ui.buttons .button.ghost:active {
-        background: none;
-        color: white; }
-        .ui.buttons .button.ghost:hover.primary, .ui.buttons .button.ghost:focus.primary, .ui.buttons .button.ghost:active.primary {
-          background-color: #3ac1ff; }
-        .ui.buttons .button.ghost:hover.secondary, .ui.buttons .button.ghost:focus.secondary, .ui.buttons .button.ghost:active.secondary {
-          background-color: #1f3742; }
-        .ui.buttons .button.ghost:hover i, .ui.buttons .button.ghost:focus i, .ui.buttons .button.ghost:active i {
-          font-size: 125%; }
+  .ui.button.icon {
+    padding: 0px; }
+    .ui.button.icon i {
+      margin: 0px; }
+  .ui.button.chain {
+    border-left: 1px solid #EEEEEE; }
+  .ui.button.ghost {
+    background: none;
+    color: #888; }
+  .ui.button.cta {
+    color: #3ac1ff;
+    font-size: 160% !important; }
+  .ui.button:hover.icon, .ui.button:focus.icon, .ui.button:active.icon {
+    padding-top: 3px; }
+  .ui.button:hover.chain, .ui.button:focus.chain, .ui.button:active.chain {
+    background: #DDD; }
+  .ui.button:hover.primary, .ui.button:focus.primary, .ui.button:active.primary {
+    background-color: #3ac1ff; }
+  .ui.button:hover.secondary, .ui.button:focus.secondary, .ui.button:active.secondary {
+    background-color: #1f3742; }
+  .ui.button:hover i, .ui.button:focus i, .ui.button:active i {
+    font-size: 120%; }
 
 .container-header {
   display: flex;
@@ -107,37 +106,41 @@ form .field {
   height: 50px;
   padding: 0;
   border-bottom: 1px solid #EEEEEE !important; }
+  .item > h2, .item > i, .item > button {
+    margin: auto 0px; }
+  .item .icn {
+    width: 50px;
+    font-size: 18px; }
   .item h2 {
-    margin: auto 5px;
+    margin-left: 5px;
     font-size: 16px;
     font-weight: 500; }
-  .item .icon {
-    margin: auto 0px; }
-  .item .ui.buttons {
-    margin-left: auto;
+  .item .button {
     visibility: hidden; }
-  .item.clickable {
-    cursor: pointer; }
+    .item .button:nth-child(3) {
+      margin-left: auto !important; }
   .item.empty {
     flex-direction: column;
     align-items: center;
     padding: 30px;
-    text-align: center; }
+    text-align: center;
+    height: auto; }
     .item.empty:hover {
       background: none !important; }
     .item.empty h2 {
+      font-weight: 400 !important;
       margin: auto; }
   .item:hover {
     background-color: #FAFAFA !important; }
     .item:hover h2 {
       color: #1f3742;
       font-weight: 700; }
-    .item:hover .buttons {
+    .item:hover .button {
       visibility: visible; }
-  .item.static:hover {
-    background: none !important; }
-  .item .label {
-    margin: 7px 0px auto 0px !important; }
+    .item:hover.static {
+      background: none !important; }
+  .item.clickable {
+    cursor: pointer; }
 
 .tab .title {
   display: inline-block;
@@ -160,17 +163,6 @@ form .field {
   background-color: #FEFEFE !important; }
 
 /* Section - Workspace details */
-#container-workspace-controls {
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  align-content: center;
-  padding-bottom: 10px !important;
-  border-bottom: 1px solid #000; }
-  #container-workspace-controls h3 {
-    margin: auto;
-    margin-left: 6px; }
-
 #container-confirm-content {
   padding: 30px; }
   #container-confirm-content * {

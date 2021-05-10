@@ -72,16 +72,10 @@ form .field {
   min-height: 100%;
 }
 
-// Item/tab icon
-.icon.large {
-  // margin-top: 7px;
-  font-size: 24px;
-}
-
 /* Scrollbar padding */
-.container-header, 
-.item, 
-#container-workspace-controls {
-  padding-left: calc(#{$app-scrollbar-width} / 2) !important;
-  padding-right: $app-scrollbar-width !important;
-}
+// .container-header, 
+// .item, 
+// #container-workspace-controls {
+//   padding-left: calc(#{$app-scrollbar-width} / 2) !important;
+//   padding-right: $app-scrollbar-width !important;
+// }

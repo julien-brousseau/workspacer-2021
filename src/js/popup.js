@@ -203,7 +203,7 @@ const Logic = {
     return;
   },
   //
-  async deleteWorkspaces (wsId) {
+  async deleteWorkspaces () {
     const confirmed = await this.confirm('deleteWorkspaces'); 
     if (confirmed) {
       await browser.runtime.sendMessage({ type: 'CLEAR_WORKSPACES' }); 
@@ -281,6 +281,7 @@ function appendElement (parent, { tag = 'div', classes = [], text = '', style = 
 
 // -------------------------------------------------------------------------
 // Sections
+// TODO: Move sections and helpersd to separate files 
 
 Logic.registerSection('workspaces', {
   sectionId: 'container-workspaces',
@@ -311,7 +312,7 @@ Logic.registerSection('workspaces', {
       const nbTabs = tabs.length;
       appendElement(container, { 
         tag: 'i', 
-        classes: [...icon.split('-'), 'icon', 'large'],
+        classes: [...icon.split('-'), 'icn', 'icon'],
         title: `This worspace contains ${ nbTabs || 'no' } tab${ nbTabs > 1 ? 's' : '' }`
       });
 
@@ -322,14 +323,14 @@ Logic.registerSection('workspaces', {
       });
       
       // Controls
-      const btnGroup = appendElement(container, { 
-        classes: ['ui', 'icon', 'buttons']
-      });
+      // const btnGroup = appendElement(container, { 
+      //   classes: ['ui', 'icon', 'buttons']
+      // });
       // Add 'add tab to workspace' button
-      appendElement(btnGroup, { 
+      appendElement(container, { 
         tag: 'button',
         text: '<i class="plus icon"></i>',
-        classes: ['ui', 'ghost', 'button', 'primary'],
+        classes: ['ui', 'ghost', 'chain', 'icon', 'button'],
         title: 'Add current tab',
       }).addEventListener('click', async event => { 
           event.stopPropagation();
@@ -337,10 +338,10 @@ Logic.registerSection('workspaces', {
           Logic.showSection('workspaces'); 
         });
       // Add 'open in new window' button
-      appendElement(btnGroup, { 
+      appendElement(container, { 
         tag: 'button',
         text: '<i class="external alternate icon"></i>',
-        classes: ['ui', 'ghost', 'button', 'secondary'],
+        classes: ['ui', 'ghost', 'chain', 'icon', 'button'],
         title: 'Open in new window',
       }).addEventListener('click', event => { 
           event.stopPropagation();

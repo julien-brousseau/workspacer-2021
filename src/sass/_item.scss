@@ -1,29 +1,33 @@
 .item {
   display: flex;
   height: $item-height;
-  // align-items: center;
-  // align-content: center;
-  // align-items: flex-start;
-  padding: 0;//$item-padding;
+  padding: 0;
   border-bottom: 1px solid $item-border-color !important;
 
+  // Vertical alignment
+  & > h2, & > i, & > button {
+    margin: auto 0px;
+  }
+
+  // Main icon
+  .icn {
+    width: $item-height;
+    font-size: 18px;
+  }
+
+  // Title
   h2 {
-    margin: auto 5px;
+    margin-left: 5px;
     font-size: $item-title-size;
     font-weight: 500;
   }
 
-  .icon {
-    margin: auto 0px;
-  }
-
-  .ui.buttons {
-    margin-left: auto;
+  // Actions
+  .button {
     visibility: hidden;
-  }
-
-  &.clickable {
-    cursor: pointer;
+    &:nth-child(3) {
+      margin-left: auto !important;
+    }
   }
   
   &.empty {
@@ -31,32 +35,31 @@
     align-items: center;
     padding: 30px;
     text-align: center;
+    height: auto;
 
     &:hover {
       background: none !important;
     }
 
     h2 {
+      font-weight: 400 !important;
       margin: auto;
     }
   }
 
   &:hover {
     background-color: $item-background !important;
+    
     h2 {
       color: $secondary;
       font-weight: 700;
     }
-    .buttons {
-      visibility: visible;
-    }
-  }
   
-  &.static:hover {
-    background: none !important;
+    .button { visibility: visible; }
+
+    // Settings only?
+    &.static { background: none !important; }
   }
 
-  .label {
-    margin: 7px 0px auto 0px !important;
-  }
+  &.clickable { cursor: pointer; }
 }
