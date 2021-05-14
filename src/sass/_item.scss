@@ -1,35 +1,43 @@
 .item {
+  position: relative;
   display: flex;
   height: $item-height;
   padding: 0;
   border-bottom: 1px solid $item-border-color !important;
+  min-width: 0;
 
-  // Vertical alignment
-  & > h2, & > i, & > button {
+  // Global vertical alignment
+  & > *, & > i {
     margin: auto 0px;
-  }
-
-  // Main icon
-  .icn {
-    width: $item-height;
-    font-size: 18px;
+    min-width: 0
   }
 
   // Title
   h2 {
+    flex-grow: 1;
     margin-left: 5px;
     font-size: $item-title-size;
     font-weight: 500;
+    // overflow: hidden;
+    white-space: nowrap;
+    z-index: 1;
   }
 
   // Actions
   .button {
     visibility: hidden;
+
+    &.pinned {
+      visibility: visible;
+      color: $secondary;
+    }
+
     &:nth-child(3) {
       margin-left: auto !important;
     }
   }
   
+  // Shown when no workspaces or tabs
   &.empty {
     flex-direction: column;
     align-items: center;
@@ -37,29 +45,22 @@
     text-align: center;
     height: auto;
 
-    &:hover {
-      background: none !important;
-    }
-
     h2 {
       font-weight: 400 !important;
       margin: auto;
     }
   }
 
+  // Interactive
+  &.clickable { cursor: pointer; }
+  
   &:hover {
     background-color: $item-background !important;
-    
-    h2 {
-      color: $secondary;
-      font-weight: 700;
-    }
-  
+
+    h2 { color: $secondary; }
     .button { visibility: visible; }
-
-    // Settings only?
-    &.static { background: none !important; }
   }
-
-  &.clickable { cursor: pointer; }
+  
+  // Disable hover for non-selectacle items
+  &.empty:hover, &.static:hover { background: none !important; }
 }

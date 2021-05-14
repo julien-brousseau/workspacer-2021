@@ -24,39 +24,37 @@
     <!-- View a single workspace -->
     <div id="container-workspace" class="container hide">
       <div id="container-workspace-header" class="container-header">
-        <button id="workspace-back-button" class="ui head ghost icon back button" title="Back to the list"><i class="chevron left icon"></i></button>
-        <i id="workspace-title-icon" class="icon"></i>
+        <button id="workspace-back-button" class="ui ghost icon button" title="Back to the list"><i class="chevron left icon"></i></button>
+        <i id="workspace-title-icon" class="feature icon"></i>
         <h1 id="workspace-title">
           WORKSPACE
         </h1>
         <!-- Controls -->
-        <div class="ui icon ">
-          <div class="ui inverted green icon top center pointing dropdown button" title="Add tabs to this workspace">
-            <i class="plus icon"></i>
-            <div class="menu">
-              <div class="item" id="workspace-add-current-tab-button" title="Add current tab to workspace">Current tab</div>
-              <div class="item" id="workspace-add-all-tabs-button" title="Add all tabs from current window">Current window</div>
-              <div class="item" id="workspace-replace-tabs-button" title="Replace all tabs with current window">Replace all tabs</div>
-            </div>
+        <button class="ui ghost icon dropdown button" title="Add tabs to this workspace">
+          <i class="plus icon"></i>
+          <div class="menu">
+            <div class="item" id="workspace-add-current-tab-button" title="Add current tab to workspace">Current tab</div>
+            <div class="item" id="workspace-add-all-tabs-button" title="Add all tabs from current window">Current window</div>
+            <div class="item" id="workspace-replace-tabs-button" title="Replace all tabs with current window">Replace all tabs</div>
           </div>
-          
-          <div class="ui inverted orange icon top center pointing dropdown button" title="Open all tabs from this workspace">
-            <i class="window restore icon"></i>
-            <div class="menu">
-              <div class="item" id="workspace-open-in-new-window-button" title="Open all tabs in a new window">Open in a new window</div>
-              <div class="item" id="workspace-open-in-current-window-button" title="Replace current window with these tabs">Replace current window</div>
-            </div>
+        </button>
+        
+        <button class="ui ghost icon dropdown button" title="Open all tabs from this workspace">
+          <i class="window restore icon"></i>
+          <div class="menu">
+            <div class="item" id="workspace-open-in-new-window-button" title="Open all tabs in a new window">Open in a new window</div>
+            <div class="item" id="workspace-open-in-current-window-button" title="Replace current window with these tabs">Replace current window</div>
           </div>
-          
-          <div class="ui ghost secondary icon top center pointing dropdown button" title="More actions">
-            <i class="bars icon"></i>
-            <div class="menu">
-              <div class="item" id="workspace-rename-button" title="Change current workspace's name">Rename workspace</div>
-              <div class="item" id="workspace-delete-tabs-button" title="Remove all tabs from this workspace">Delete all tabs</div>
-              <div class="item" id="workspace-delete-button" title="Delete this workspace and all tabs">Delete workspace</div>
-            </div>
+        </button>
+        
+        <button class="ui ghost icon dropdown button" title="More actions">
+          <i class="bars icon"></i>
+          <div class="menu">
+            <div class="item" id="workspace-rename-button" title="Change current workspace's name">Rename workspace</div>
+            <div class="item" id="workspace-delete-tabs-button" title="Remove all tabs from this workspace">Delete all tabs</div>
+            <div class="item" id="workspace-delete-button" title="Delete this workspace and all tabs">Delete workspace</div>
           </div>
-        </div>
+        </button>
       </div>
       <!-- Content -->
       <div id="container-workspace-tablist"></div>

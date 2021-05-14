@@ -1,40 +1,32 @@
-.tab {
-  .title {
-    display: inline-block;
-    overflow: hidden;
-    white-space: nowrap;
-    margin: auto 3px;
+$tab-border-width: 4px;
+
+.tabs {
+  &.pinned .tab {
+    border-color: $primary;
+    padding-left: 0px;
   }
 
-  .favIcon {
-    width: 24px;
-    height: 24px;
-    margin: auto 0px;
-    padding: 3px;
-    border-radius: 50%;
-    background-color: $item-background;
-  }
+  .tab {
+    border-left: $tab-border-width solid $header-background-color;
+    padding-left: 4px;
 
-  // .buttons {
-  //   margin-left: auto;
-  //   position: absolute;
-  //   right: 20px;
-  //   background-color: white;
-  
-  //   button.ui.button.pinned {
-  //     color: $btn-pinned-color !important;
-  //     background-color: $btn-pinned-background !important;
-  //   }
+    .button:first-child { margin-left: 0 !important; }
+    .button:nth-child(5) { margin-left: auto !important; }
+    
+    .favIcon {
+      flex: 0 0 $item-height;
+      width: $item-height;
+      height: $item-height;
+      margin: 0px;
+      padding: 12px;
+      border-radius: 50%;
+    }
 
-  //   button.ui.button.pinned:hover {
-  //     background-color: $btn-pinned-hover-background !important;
-  //   }
-  // }
-
-  &:first-child button.ui.button.move-up, 
-  &:last-child button.ui.button.move-down {
-    pointer-events: none !important;
-    color: $btn-disabled-color !important;
-    background-color: $btn-disabled-background !important;
+    &:first-child button.ui.button.move-up, 
+    &:last-child button.ui.button.move-down {
+      pointer-events: none !important;
+      color: $btn-disabled-color !important;
+      background-color: $btn-disabled-background !important;
+    }
   }
 }

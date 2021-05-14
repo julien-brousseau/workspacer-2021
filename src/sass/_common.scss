@@ -24,6 +24,14 @@ form .field {
   margin-bottom: 15px !important;
 }
 
+// Main item/header icon
+.icon.feature {
+  width: $item-height;
+  margin: auto 0px;
+  width: $item-height;
+  font-size: 18px;
+}
+
 #workspace-form-icons {
   display: flex;
   flex-wrap: wrap;

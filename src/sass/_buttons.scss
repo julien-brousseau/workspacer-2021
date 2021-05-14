@@ -1,12 +1,17 @@
 $icon-hover-size: 120%;
 
-.ui.button {
-  width: $item-height;
+.ui.button.ghost {
+  flex: 0 0 $item-height;
+  width: $item-height !important;
   height: $item-height;
   margin: 0px;
   padding: 0px;
+  z-index: 999;
   border: 0px none;
   border-radius: 0px;
+  text-align: center;
+  background: none;
+  color: $btn-ghost-color;
 
   &.icon {
     padding: 0px;
@@ -15,25 +20,28 @@ $icon-hover-size: 120%;
 
   // Part of a series of buttons
   &.chain {
+    background: white;
     border-left: 1px solid $item-border-color;
   }
   
-  // Only icon visible
-  &.ghost {
-    background: none;
-    color: $btn-ghost-color;
-  }
-
+  // Add new workspace
   &.cta {
     color: $primary;
     font-size: 160% !important;
   }
 
-  &:hover, &:focus, &:active {
+  // 
+  &.thin {
+    flex-basis: calc(#{$item-height - 20});
+    text-align: right;
+    // width: 25px;
+  }
+
+  &:hover, &:focus, &:active, &.active {
     &.icon { padding-top: 3px; }
     &.chain { background: #DDD; }
-    &.primary { background-color: $primary; }
-    &.secondary { background-color: $secondary; }
+    &.primary { color: $primary; }
+    &.secondary { color: $secondary; }
     i { font-size: $icon-hover-size; }
   }
 }

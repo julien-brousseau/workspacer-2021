@@ -1,3 +1,6 @@
+import { appendElement, resetElement } from './helpers.js';
+
+//
 const DEBUG = false;
 
 // Main logic
@@ -248,40 +251,8 @@ const Logic = {
 };
 
 // -------------------------------------------------------------------------
-// Helpers
-
-// Clears all listeners from html element by replacing the node in DOM
-function removeListeners (id) {
-  const node = document.getElementById(id);
-  const clone = node.cloneNode(true);
-  node.parentNode.replaceChild(clone, node);
-}
-
-// Generate, attach and returns a DOM node
-function appendElement (parent, { tag = 'div', classes = [], text = '', style = null,
-  title = '', src = null, type = null, id = null, _for = null, value = null, name = null } = {}) {
-  const element = document.createElement(tag);
-  element.innerHTML = text;
-  element.title = title;
-
-  element.classList.add(...classes.filter(c => c && c !== ''));
-
-  // TODO: Use destructuring
-  if (id) element.id = id;
-  if (src) element.src = src;
-  if (type) element.type = type;
-  if (_for) element.setAttribute('for', _for);
-  if (value) element.value = value;
-  if (name) element.name = name;
-  if (style) element.style = `{${style}}`;
-
-  parent.appendChild(element);
-  return element;
-}
-
-// -------------------------------------------------------------------------
 // Sections
-// TODO: Move sections and helpersd to separate files 
+// TODO: Move sections to separate files ?
 
 Logic.registerSection('workspaces', {
   sectionId: 'container-workspaces',
@@ -312,7 +283,7 @@ Logic.registerSection('workspaces', {
       const nbTabs = tabs.length;
       appendElement(container, { 
         tag: 'i', 
-        classes: [...icon.split('-'), 'icn', 'icon'],
+        classes: [...icon.split('-'), 'feature', 'icon'],
         title: `This worspace contains ${ nbTabs || 'no' } tab${ nbTabs > 1 ? 's' : '' }`
       });
 
@@ -377,20 +348,20 @@ Logic.registerSection('workspace', {
     // Icon
     const i = document.getElementById('workspace-title-icon');
     i.classList.remove(...i.classList);
-    i.classList.add(...icon.split('-'), 'icon', 'large');
+    i.classList.add(...icon.split('-'), 'feature', 'icon');
 
     // Static buttons
-    removeListeners('workspace-add-current-tab-button');
+    resetElement('workspace-add-current-tab-button');
     document.getElementById('workspace-add-current-tab-button').addEventListener('click', async () => { 
       await Logic.addCurrentTab(workspace);
       Logic.showSection('workspace', { wsId }); 
     });
-    removeListeners('workspace-add-all-tabs-button');
+    resetElement('workspace-add-all-tabs-button');
     document.getElementById('workspace-add-all-tabs-button').addEventListener('click', async () => { 
       await Logic.addCurrentTab(workspace, true);
       Logic.showSection('workspace', { wsId }); 
     });
-    removeListeners('workspace-replace-tabs-button');
+    resetElement('workspace-replace-tabs-button');
     document.getElementById('workspace-replace-tabs-button').addEventListener('click', async () => { 
       const confirmed = tabs.length ? await Logic.confirm('replaceTabs', { workspace }) : true;
       if (confirmed) {
@@ -399,19 +370,19 @@ Logic.registerSection('workspace', {
       }
       Logic.showSection('workspace', { wsId }); 
     });
-    removeListeners('workspace-open-in-new-window-button');
+    resetElement('workspace-open-in-new-window-button');
     document.getElementById('workspace-open-in-new-window-button').addEventListener('click', () => { 
       Logic.openTabs(tabs);
     });
-    removeListeners('workspace-open-in-current-window-button');
+    resetElement('workspace-open-in-current-window-button');
     document.getElementById('workspace-open-in-current-window-button').addEventListener('click', () => { 
       Logic.openTabs(tabs, true);
     });
-    removeListeners('workspace-rename-button');
+    resetElement('workspace-rename-button');
     document.getElementById('workspace-rename-button').addEventListener('click', () => { 
       Logic.showSection('workspace-form', { wsId }); 
     });
-    removeListeners('workspace-delete-tabs-button');
+    resetElement('workspace-delete-tabs-button');
     document.getElementById('workspace-delete-tabs-button').addEventListener('click', async () => { 
       if (!tabs.length) return Logic.msg('No tabs to delete', 'red');
       const confirmed = await Logic.confirm('deleteTabs', { workspace }); 
@@ -420,7 +391,7 @@ Logic.registerSection('workspace', {
       }
       Logic.showSection('workspace', { wsId }); 
     });
-    removeListeners('workspace-delete-button');
+    resetElement('workspace-delete-button');
     document.getElementById('workspace-delete-button').addEventListener('click', async () => { 
       const confirmed = await Logic.confirm('deleteWorkspace', { workspace }); 
       if (confirmed) {
@@ -431,18 +402,26 @@ Logic.registerSection('workspace', {
       }
     });
 
+    // Containers for pinned/unpinned tabs
+    const pinnedTabsContainer = appendElement(fragment, { classes: ['tabs', 'pinned']});
+    const tabsContainer = appendElement(fragment, { classes: ['tabs']});
+
     // Tab list
     tabs.forEach(tab => {
       const { title, tabId, favIconUrl: icon, pinned } = tab;
-      const container = appendElement(fragment, { classes: ['item', 'tab']});
+      const container = appendElement(
+        pinned ? pinnedTabsContainer : tabsContainer, 
+        { classes: ['item', 'tab']}
+      );
 
-      // Append pin icon
-      appendElement(container, { 
-        tag: 'i',
-        classes: ['favIcon', 'icon', 'pin', pinned ? '' : 'hidden'],
-        style: 'color:red',
-        title: 'This tab is pinned'
-      });
+      // Append pin button
+      appendElement(container, {
+        tag: 'button',
+        text: '<i class="pin icon"></i>',
+        classes: ['ui', 'thin', 'ghost', 'icon', 'button', pinned ? 'pinned' : ''],
+        title: pinned ? 'Unpin tab' : 'Pin tab'
+      }).addEventListener('click', () => Logic.pinTab(tab)); 
+
       // Append favicon image or placeholder
       appendElement(container, { 
         tag: icon ? 'img' : 'div',
@@ -451,48 +430,37 @@ Logic.registerSection('workspace', {
       });
       // Append title
       appendElement(container, { 
-        tag: 'span', 
+        tag: 'h2', 
         text: title, 
         classes: ['title']
       });
 
-      // Append controls
-      const btnGroup = appendElement(container, { 
-        classes: ['ui', 'mini', 'basic', 'icon', 'buttons']
-      });
       // Move up
-      appendElement(btnGroup, { 
+      appendElement(container, { 
         tag: 'button',
         text: '<i class="caret up icon"></i>',
-        classes: ['ui', 'ghost', 'button', 'move-up'],
+        classes: ['ui', 'ghost', 'icon', 'chain', 'button', 'move-up'],
         title: 'Move up'
       }).addEventListener('click', () => Logic.moveTab(tab, 'up')); 
       // Move down
-      appendElement(btnGroup, { 
+      appendElement(container, { 
         tag: 'button',
         text: '<i class="caret down icon"></i>',
-        classes: ['ui', 'ghost', 'button', 'move-down'],
+        classes: ['ui', 'ghost', 'icon', 'chain', 'button', 'move-down'],
         title: 'Move down'
       }).addEventListener('click', () => Logic.moveTab(tab, 'down')); 
-      // Pin
-      appendElement(btnGroup, {
-        tag: 'button',
-        text: '<i class="pin icon"></i>',
-        classes: ['ui', 'ghost', 'button', pinned ? 'pinned' : ''],
-        title: pinned ? 'Unpin tab' : 'Pin tab'
-      }).addEventListener('click', () => Logic.pinTab(tab)); 
       // Modify
-      appendElement(btnGroup, {
+      appendElement(container, {
         tag: 'button',
         text: '<i class="pencil icon"></i>',
-        classes: ['ui', 'ghost', 'button'],
+        classes: ['ui', 'ghost', 'icon', 'chain', 'button'],
         title: 'Modify tab info'
       }).addEventListener('click', () => Logic.showSection('tab-form', { tabId })); 
       // Delete
-      appendElement(btnGroup, {
+      appendElement(container, {
         tag: 'button',
         text: '<i class="trash icon"></i>',
-        classes: ['ui', 'ghost', 'button'],
+        classes: ['ui', 'ghost', 'icon', 'chain', 'button'],
         title: 'Delete this tab'
       }).addEventListener('click', async () => {
           await Logic.deleteTabs(tab);
@@ -556,7 +524,7 @@ Logic.registerSection('workspace-form', {
     });
     
     // Submit button
-    removeListeners('workspace-form');
+    resetElement('workspace-form');
     document.getElementById('workspace-submit-button').innerHTML = id ? 'Save' : 'Create';
     document.getElementById('workspace-form').addEventListener('submit', async event => { 
       event.preventDefault();
@@ -588,7 +556,7 @@ Logic.registerSection('tab-form', {
     document.getElementById('tab-form-url').value = url;
     
     // Submit button
-    removeListeners('tab-form');
+    resetElement('tab-form');
     document.getElementById('tab-form').addEventListener('submit', async event => { 
       event.preventDefault();
       if (!event.target.elements[0].value || !event.target.elements[1].value) return;  // TODO: Replace with validation
@@ -621,13 +589,13 @@ Logic.registerSection('settings', {
   },
   async render () {
     // Export button
-    removeListeners('export-all-workspaces-button');
+    resetElement('export-all-workspaces-button');
     document.getElementById('export-all-workspaces-button').addEventListener('click', async () => { 
       Logic.exportAsJSON();
     });
 
     // Import button
-    removeListeners('import-all-workspaces-button');
+    resetElement('import-all-workspaces-button');
     document.getElementById('import-field').value = '';
     document.getElementById('import-all-workspaces-button').addEventListener('click', async () => { 
       // Fetch ws and tabs from textarea

@@ -1,0 +1,40 @@
+// Generate, attach and returns a DOM node
+export const appendElement = (parent, { 
+    tag = 'div', 
+    classes = [], 
+    text = '', 
+    style = null,
+    title = '', 
+    src = null, 
+    type = null, 
+    id = null, 
+    _for = null, 
+    value = null, 
+    name = null } = {}) => {
+
+  const element = document.createElement(tag);
+  element.innerHTML = text; 
+  element.title = title;
+
+  element.classList.add(...classes.filter(c => c && c !== ''));
+
+  // TODO: Optimize with destructuring
+  if (id) element.id = id;
+  if (src) element.src = src;
+  if (type) element.type = type;
+  if (_for) element.setAttribute('for', _for);
+  if (value) element.value = value;
+  if (name) element.name = name;
+  if (style) element.style = `{${style}}`;
+
+  parent.appendChild(element);
+  return element;
+};
+
+
+// Clears all listeners from html element by replacing the node in DOM
+export const resetElement = (id) => {
+  const node = document.getElementById(id);
+  const clone = node.cloneNode(true);
+  node.parentNode.replaceChild(clone, node);
+};
