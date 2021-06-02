@@ -185,17 +185,38 @@ const Logic = {
 
   //
   async submitWorkspace (workspace) {
-    const { id } = await browser.runtime.sendMessage({ type: 'CREATE_OR_EDIT_WORKSPACE', workspace });
-    if (id) {
-      Logic.msg('Workspace ' + (workspace.id ? 'saved!' : 'created!'));
+    const { id } = workspace;
+    const { id: wsId } = await browser.runtime.sendMessage({ type: 'CREATE_OR_EDIT_WORKSPACE', workspace });
+    if (wsId) {
+      // Updated
+      if (id) {
+        this.msg('Workspace updated!');
+        this.showSection('workspace', { wsId }); 
+      // Created
+      } else {
+        this.msg('Workspace created!');
+        this.showSection('workspaces'); 
+      }
       return id;
     }
     return false;
   },
   // 
+  async submitTab (tabData) {
+    const tab = { ...this.currentTab() };
+    const tabs = [{ ...tab, ...tabData }];
+
+    await browser.runtime.sendMessage({ type: 'CREATE_OR_EDIT_TABS', tabs }); 
+
+    Logic.msg('Tab saved!');
+    Logic.showSection('workspace', { wsId: tab.wsId }); 
+    return;
+  },
+  // 
   async addCurrentTab (workspace, currentWindow = false) {
     const type = currentWindow ? 'ADD_CURRENT_WINDOW_TO_WORKSPACE' : 'ADD_CURRENT_TAB_TO_WORKSPACE';
     const added = await browser.runtime.sendMessage({ type, workspace });
+
     if (added) this.msg(`${ added } tab${ added > 1 ? 's' : '' } added`);
     else this.msg('Error: Invalid tab', 'red');
     return;
@@ -321,10 +342,12 @@ Logic.registerSection('workspaces', {
     });
 
     // Empty item
-    if (!workspaces.length) appendElement(fragment, { 
-      classes: ['item', 'empty'],
-      text: '<h2>You have no workspace</h2>Create a new workspace to continue.'
-    });
+    if (!workspaces.length) {
+      appendElement(fragment, { 
+        classes: ['item', 'empty'],
+        text: '<h2>You have no workspace</h2>'
+      });
+    }
 
     document.getElementById('container-workspaces-content').innerHTML = '';
     document.getElementById('container-workspaces-content').appendChild(fragment);
@@ -351,6 +374,7 @@ Logic.registerSection('workspace', {
     i.classList.add(...icon.split('-'), 'feature', 'icon');
 
     // Static buttons
+    // TODO: increase z-indez of popup menus
     resetElement('workspace-add-current-tab-button');
     document.getElementById('workspace-add-current-tab-button').addEventListener('click', async () => { 
       await Logic.addCurrentTab(workspace);
@@ -418,7 +442,7 @@ Logic.registerSection('workspace', {
       appendElement(container, {
         tag: 'button',
         text: '<i class="pin icon"></i>',
-        classes: ['ui', 'thin', 'ghost', 'icon', 'button', pinned ? 'pinned' : ''],
+        classes: ['ui', 'ghost', 'pin', 'icon', 'button', pinned ? 'pinned' : ''],
         title: pinned ? 'Unpin tab' : 'Pin tab'
       }).addEventListener('click', () => Logic.pinTab(tab)); 
 
@@ -460,7 +484,7 @@ Logic.registerSection('workspace', {
       appendElement(container, {
         tag: 'button',
         text: '<i class="trash icon"></i>',
-        classes: ['ui', 'ghost', 'icon', 'chain', 'button'],
+        classes: ['ui', 'ghost', 'danger', 'icon', 'chain', 'button'],
         title: 'Delete this tab'
       }).addEventListener('click', async () => {
           await Logic.deleteTabs(tab);
@@ -528,12 +552,13 @@ Logic.registerSection('workspace-form', {
     document.getElementById('workspace-submit-button').innerHTML = id ? 'Save' : 'Create';
     document.getElementById('workspace-form').addEventListener('submit', async event => { 
       event.preventDefault();
+
       // TODO: Implement proper validation
       if (!event.target.elements[0].value) return; 
+
       const title = event.target.elements[0].value;
       const icon = document.querySelector('input[name="icon-list"]:checked').value;
-      const wsId = await Logic.submitWorkspace({ ...workspace, title, icon });
-      Logic.showSection('workspace', { wsId }); 
+      Logic.submitWorkspace({ ...workspace, title, icon });
     });
   }
 });
@@ -547,6 +572,7 @@ Logic.registerSection('tab-form', {
     const { wsId, title, url } = tab;
     
     // Back button
+    resetElement('tab-form-back-button');
     document.getElementById('tab-form-back-button').addEventListener('click', () => { 
       Logic.showSection('workspace', { wsId }); 
     });
@@ -556,22 +582,16 @@ Logic.registerSection('tab-form', {
     document.getElementById('tab-form-url').value = url;
     
     // Submit button
-    resetElement('tab-form');
-    document.getElementById('tab-form').addEventListener('submit', async event => { 
+    resetElement('container-tab-form-content');
+    document.getElementById('container-tab-form-content').addEventListener('submit', async event => { 
       event.preventDefault();
-      if (!event.target.elements[0].value || !event.target.elements[1].value) return;  // TODO: Replace with validation
 
-      // TODO: Extract to Logic
-      // Merge form data with tab, and make it a single-element array
-      const allowedFields = ['title', 'url'];
-      const tabs = [Object.assign(tab, [...event.target.elements]
-        .filter(e => allowedFields.includes(e.name))
-        .map(e => ({ [e.name]: e.value }))
-        .reduce((data, e) => Object.assign(data, e), {}))];
+      // TODO: Replace with validation
+      const title = document.getElementById('tab-form-title').value;
+      const url = document.getElementById('tab-form-url').value;
+      if (!title || !url) return;
 
-      await browser.runtime.sendMessage({ type: 'CREATE_OR_EDIT_TABS', tabs }); 
-      Logic.msg('Tab saved!');
-      Logic.showSection('workspace', { wsId }); 
+      Logic.submitTab({ ...tab, title, url });
     });
   }
 });
@@ -638,6 +658,7 @@ Logic.registerSection('confirm', {
   async render () {}
 });
 
+// Default section
 Logic.showSection('workspaces');
 
 // eslint-disable-next-line no-undef

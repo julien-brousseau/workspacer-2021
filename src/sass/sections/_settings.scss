@@ -1,5 +1,5 @@
 #container-settings-content .item {
-  padding: 20px;
+  padding: 12px;
   border-color: black !important;
 
   h2 {
@@ -7,7 +7,7 @@
   }
 
   p {
-    padding: 6px;
+    padding: 0px;
     margin: 0px;
   }
 
@@ -21,6 +21,11 @@
   
   .button {
     margin: auto 0px 0px auto;
+    visibility: visible;
+  }
+
+  .warning {
+    color: $danger;
   }
   
 }

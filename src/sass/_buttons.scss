@@ -1,17 +1,27 @@
-$icon-hover-size: 120%;
-
 .ui.button.ghost {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
   flex: 0 0 $item-height;
-  width: $item-height !important;
+  width: $item-height;
   height: $item-height;
   margin: 0px;
   padding: 0px;
-  z-index: 999;
+  z-index: 5;
+
   border: 0px none;
   border-radius: 0px;
   text-align: center;
   background: none;
   color: $btn-ghost-color;
+  font-size: 85%;
+
+  &.dropdown.active.visible, &.dropdown.active.visible:active {
+    color: white;
+    background-color: $header-background-color;
+    z-index: 999;
+  }
 
   &.icon {
     padding: 0px;
@@ -20,6 +30,7 @@ $icon-hover-size: 120%;
 
   // Part of a series of buttons
   &.chain {
+    color: $secondary;
     background: white;
     border-left: 1px solid $item-border-color;
   }
@@ -30,18 +41,24 @@ $icon-hover-size: 120%;
     font-size: 160% !important;
   }
 
-  // 
-  &.thin {
-    flex-basis: calc(#{$item-height - 20});
-    text-align: right;
-    // width: 25px;
+  // Add new workspace
+  &.pin {
+    font-size: 85%;
+    color: $btn-ghost-light-color;
+  }
+  &.pin.pinned {
+    color: $secondary;
   }
 
   &:hover, &:focus, &:active, &.active {
-    &.icon { padding-top: 3px; }
-    &.chain { background: #DDD; }
-    &.primary { color: $primary; }
-    &.secondary { color: $secondary; }
-    i { font-size: $icon-hover-size; }
+    color: white;
+    
+    i { font-size: $btn-ghost-hover-size; }
+
+    &.chain { background: $secondary; }
+    &.cta { background-color: $primary; }
+    &.danger { background-color: $danger; }
+    &.pin { color: $secondary; }
+    &.pinned { color: $danger; }
   }
 }

@@ -24,7 +24,7 @@
     <!-- View a single workspace -->
     <div id="container-workspace" class="container hide">
       <div id="container-workspace-header" class="container-header">
-        <button id="workspace-back-button" class="ui ghost icon button" title="Back to the list"><i class="chevron left icon"></i></button>
+        <button id="workspace-back-button" class="ui ghost icon button" title="Back to workspaces"><i class="chevron left icon"></i></button>
         <i id="workspace-title-icon" class="feature icon"></i>
         <h1 id="workspace-title">
           WORKSPACE
@@ -63,7 +63,7 @@
     <!-- Workspace form for create/edit -->
     <div id="container-workspace-form" class="container hide">
       <div id="container-workspace-form-header" class="container-header">
-        <button id="workspace-form-back-button" class="ui ghost icon back button" title="Back to the list"><i class="chevron left icon"></i></button>
+        <button id="workspace-form-back-button" class="ui ghost icon back button" title="Back to workspaces"><i class="chevron left icon"></i></button>
         <h1 id="workspace-form-header-title">New workspace</h1>
       </div>
       <div id="container-workspace-form-content">
@@ -84,28 +84,26 @@
     <!-- Tab form for edit -->
     <div id="container-tab-form" class="container hide">
       <div id="container-tab-form-header" class="container-header">
-        <button id="tab-form-back-button" class="ui ghost icon back button" title="Back to workspace"><i class="chevron left icon"></i></button>
+        <button id="tab-form-back-button" class="ui ghost icon back button" title="Cancel modifications"><i class="chevron left icon"></i></button>
         <h1>Edit tab</h1>
       </div>
-      <div id="container-tab-form-content">
-        <form id="tab-form" class="ui form basic" autocomplete="off">
-          <div class="field">
-            <label>Tab name</label>
-            <input id="tab-form-title" name="title" type="text" placeholder="Your favorite unicorn site">
-          </div>
-          <div class="field">
-            <label>URL</label>
-            <input id="tab-form-url" name="url" type="text" placeholder="https://www.rainbowsandstuff.com">
-          </div>
-          <button id="tab-submit-button" class="ui secondary button" type="submit">Save</button>
-        </form>
-      </div>
+      <form id="container-tab-form-content" class="ui form basic" autocomplete="off">
+        <div class="field">
+          <label>Tab name</label>
+          <input id="tab-form-title" name="title" type="text" placeholder="Your favorite unicorn site">
+        </div>
+        <div class="field">
+          <label>URL</label>
+          <input id="tab-form-url" name="url" type="text" placeholder="https://www.rainbowsandstuff.com">
+        </div>
+        <button id="tab-submit-button" class="ui secondary button" type="submit" title="Save tab">Save tab</button>
+      </form>
     </div>
 
     <!-- App settings -->
     <div id="container-settings" class="container hide">
       <div id="container-settings-header" class="container-header">
-        <button id="settings-back-button" class="ui ghost icon back button" title="Back to the list"><i class="chevron left icon"></i></button>
+        <button id="settings-back-button" class="ui ghost icon back button" title="Exit settings"><i class="chevron left icon"></i></button>
         <h1>Extension settings</h1>
       </div>
       <div id="container-settings-content">
@@ -128,10 +126,10 @@
         </div> 
         <div class="item static">
           <div class="settings-description">
-            <h2>Delete everything</h2>
+            <h2 class="warning">Delete everything</h2>
             <p class="warning">Warning: This operation is irreversible! Please make sure to manually export your current data before clicking.</p>
           </div>
-          <button id="delete-all-workspaces-button" class="ui red button" title="Delete all your workspaces and tabs">Delete everything</button>
+          <button id="delete-all-workspaces-button" class="ui red button" title="Delete all your workspaces and tabs">Clear</button>
         </div>
       </div>
     </div>

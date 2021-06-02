@@ -1,22 +1,26 @@
 html {
-  height: auto;
   height: $app-height; 
-  // min-height: $app-min-height;
+
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    width: 0px;
+    background: transparent;
+  }
 }
 
 body {
   width: $app-width;
+  max-width: $app-width;
   margin: 0px; 
   padding: 0px;
-
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  /* font-family: Avenir, Helvetica, Arial, sans-serif; */
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: $text-color;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+  color: $secondary;
 }
 
-form {
+.form {
   padding: 15px;
 }
 
@@ -79,11 +83,3 @@ form .field {
 .container {
   min-height: 100%;
 }
-
-/* Scrollbar padding */
-// .container-header, 
-// .item, 
-// #container-workspace-controls {
-//   padding-left: calc(#{$app-scrollbar-width} / 2) !important;
-//   padding-right: $app-scrollbar-width !important;
-// }

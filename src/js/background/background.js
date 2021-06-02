@@ -78,7 +78,7 @@ async function fetchAllTabsFromWindow () {
     .catch(e => console.log('Error > fetchAllTabsFromWindow :>> ', e));
 }
 
-// Filter out un-necessary props from a raw tab object
+// Filter out un-necessary props from a browser's tab object
 function filterRawTab (tab) {
   const props = ['title', 'url', 'pinned', 'discarded', 'favIconUrl'];
   return props.reduce((filteredProps, prop) => ({ ...filteredProps, [prop]: tab[prop] }), {});

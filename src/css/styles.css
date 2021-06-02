@@ -1,27 +1,31 @@
 html {
-  height: auto;
-  height: 500px; }
+  height: 500px;
+  scrollbar-width: none;
+  -ms-overflow-style: none; }
+  html::-webkit-scrollbar {
+    width: 0px;
+    background: transparent; }
 
 body {
-  width: 650px;
+  width: 400px;
+  max-width: 400px;
   margin: 0px;
   padding: 0px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  /* font-family: Avenir, Helvetica, Arial, sans-serif; */
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: #2C3E50; }
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+  color: #293b4d; }
 
-form {
+.form {
   padding: 15px; }
 
 form .field {
   margin-bottom: 15px !important; }
 
 .icon.feature {
-  width: 50px;
+  width: 36px;
   margin: auto 0px;
-  width: 50px;
+  width: 36px;
   font-size: 18px; }
 
 #workspace-form-icons {
@@ -48,7 +52,7 @@ form .field {
 #msg .label {
   width: auto;
   text-align: center;
-  max-width: calc(650px / 2); }
+  max-width: calc(400px / 2); }
 
 .hide {
   display: none !important; }
@@ -59,49 +63,63 @@ form .field {
 .container {
   min-height: 100%; }
 
-/* Scrollbar padding */
 .ui.button.ghost {
-  flex: 0 0 50px;
-  width: 50px !important;
-  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 36px;
+  width: 36px;
+  height: 36px;
   margin: 0px;
   padding: 0px;
-  z-index: 999;
+  z-index: 5;
   border: 0px none;
   border-radius: 0px;
   text-align: center;
   background: none;
-  color: #888; }
+  color: #777;
+  font-size: 85%; }
+  .ui.button.ghost.dropdown.active.visible, .ui.button.ghost.dropdown.active.visible:active {
+    color: white;
+    background-color: #1b1c1d;
+    z-index: 999; }
   .ui.button.ghost.icon {
     padding: 0px; }
     .ui.button.ghost.icon i {
       margin: 0px; }
   .ui.button.ghost.chain {
+    color: #293b4d;
     background: white;
     border-left: 1px solid #EEEEEE; }
   .ui.button.ghost.cta {
     color: #3ac1ff;
     font-size: 160% !important; }
-  .ui.button.ghost.thin {
-    flex-basis: calc(30px);
-    text-align: right; }
-  .ui.button.ghost:hover.icon, .ui.button.ghost:focus.icon, .ui.button.ghost:active.icon, .ui.button.ghost.active.icon {
-    padding-top: 3px; }
-  .ui.button.ghost:hover.chain, .ui.button.ghost:focus.chain, .ui.button.ghost:active.chain, .ui.button.ghost.active.chain {
-    background: #DDD; }
-  .ui.button.ghost:hover.primary, .ui.button.ghost:focus.primary, .ui.button.ghost:active.primary, .ui.button.ghost.active.primary {
-    color: #3ac1ff; }
-  .ui.button.ghost:hover.secondary, .ui.button.ghost:focus.secondary, .ui.button.ghost:active.secondary, .ui.button.ghost.active.secondary {
-    color: #1f3742; }
-  .ui.button.ghost:hover i, .ui.button.ghost:focus i, .ui.button.ghost:active i, .ui.button.ghost.active i {
-    font-size: 120%; }
+  .ui.button.ghost.pin {
+    font-size: 85%;
+    color: #cecece; }
+  .ui.button.ghost.pin.pinned {
+    color: #293b4d; }
+  .ui.button.ghost:hover, .ui.button.ghost:focus, .ui.button.ghost:active, .ui.button.ghost.active {
+    color: white; }
+    .ui.button.ghost:hover i, .ui.button.ghost:focus i, .ui.button.ghost:active i, .ui.button.ghost.active i {
+      font-size: 111%; }
+    .ui.button.ghost:hover.chain, .ui.button.ghost:focus.chain, .ui.button.ghost:active.chain, .ui.button.ghost.active.chain {
+      background: #293b4d; }
+    .ui.button.ghost:hover.cta, .ui.button.ghost:focus.cta, .ui.button.ghost:active.cta, .ui.button.ghost.active.cta {
+      background-color: #3ac1ff; }
+    .ui.button.ghost:hover.danger, .ui.button.ghost:focus.danger, .ui.button.ghost:active.danger, .ui.button.ghost.active.danger {
+      background-color: #b91111; }
+    .ui.button.ghost:hover.pin, .ui.button.ghost:focus.pin, .ui.button.ghost:active.pin, .ui.button.ghost.active.pin {
+      color: #293b4d; }
+    .ui.button.ghost:hover.pinned, .ui.button.ghost:focus.pinned, .ui.button.ghost:active.pinned, .ui.button.ghost.active.pinned {
+      color: #b91111; }
 
 .container-header {
   display: flex;
   align-content: center;
   align-items: flex-start;
   height: 50px;
-  color: #AAA;
+  color: #CCC;
   background-color: #1b1c1d;
   border-bottom: 1px solid #000; }
   .container-header.home {
@@ -112,31 +130,36 @@ form .field {
     box-shadow: none;
     font-size: 16px;
     font-weight: 500; }
+  .container-header .ui.button.ghost {
+    flex: 0 0 50px;
+    width: 50px;
+    height: 50px;
+    font-size: 140%; }
 
 .item {
   position: relative;
   display: flex;
-  height: 50px;
+  height: 36px;
   padding: 0;
-  border-bottom: 1px solid #EEEEEE !important;
-  min-width: 0; }
+  border-bottom: 1px solid #EEEEEE;
+  min-width: 0;
+  overflow: hidden; }
   .item > *, .item > i {
     margin: auto 0px;
     min-width: 0; }
   .item h2 {
     flex-grow: 1;
-    margin-left: 5px;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 500;
     white-space: nowrap;
-    z-index: 1; }
+    z-index: 1;
+    letter-spacing: 0.5px; }
   .item .button {
     visibility: hidden; }
     .item .button.pinned {
-      visibility: visible;
-      color: #1f3742; }
+      visibility: visible; }
     .item .button:nth-child(3) {
-      margin-left: auto !important; }
+      margin-left: auto; }
   .item.empty {
     flex-direction: column;
     align-items: center;
@@ -146,35 +169,40 @@ form .field {
     .item.empty h2 {
       font-weight: 400 !important;
       margin: auto; }
+  .item.static {
+    height: auto; }
   .item.clickable {
     cursor: pointer; }
-  .item:hover {
-    background-color: #FAFAFA !important; }
-    .item:hover h2 {
-      color: #1f3742; }
-    .item:hover .button {
+  .item:not(.empty):not(.static):hover {
+    background-color: #FAFAFA;
+    overflow: visible; }
+    .item:not(.empty):not(.static):hover h2 {
+      color: #6388ac; }
+    .item:not(.empty):not(.static):hover .button {
       visibility: visible; }
-  .item.empty:hover, .item.static:hover {
-    background: none !important; }
 
 .tabs.pinned .tab {
-  border-color: #3ac1ff;
+  border-left: #293b4d solid 4px;
   padding-left: 0px; }
 
 .tabs .tab {
-  border-left: 4px solid #1b1c1d;
-  padding-left: 4px; }
-  .tabs .tab .button:first-child {
-    margin-left: 0 !important; }
-  .tabs .tab .button:nth-child(5) {
-    margin-left: auto !important; }
+  border-left: 0px none;
+  padding-left: 4px;
+  border-right: white solid 4px; }
   .tabs .tab .favIcon {
-    flex: 0 0 50px;
-    width: 50px;
-    height: 50px;
+    flex: 0 0 36px;
+    width: 36px;
+    height: 36px;
     margin: 0px;
-    padding: 12px;
+    margin-left: -14px;
+    padding: 10px;
     border-radius: 50%; }
+  .tabs .tab .button:first-child {
+    margin-left: 0; }
+  .tabs .tab .button:nth-child(5) {
+    margin-left: auto; }
+  .tabs .tab .button:last-child {
+    margin-right: -5px; }
   .tabs .tab:first-child button.ui.button.move-up,
   .tabs .tab:last-child button.ui.button.move-down {
     pointer-events: none !important;
@@ -187,7 +215,7 @@ form .field {
   #container-confirm-content * {
     text-align: center; }
   #container-confirm-content strong {
-    color: red; }
+    color: #b91111; }
   #container-confirm-content p {
     font-size: 16px; }
   #container-confirm-content ul {
@@ -200,20 +228,23 @@ form .field {
       border: 0px none; }
   #container-confirm-content .warning {
     font-size: 16px;
-    color: red;
+    color: #b91111;
     margin-top: 25px; }
 
 #container-settings-content .item {
-  padding: 20px;
+  padding: 12px;
   border-color: black !important; }
   #container-settings-content .item h2 {
     font-weight: 700; }
   #container-settings-content .item p {
-    padding: 6px;
+    padding: 0px;
     margin: 0px; }
   #container-settings-content .item .field {
     padding: 6px; }
   #container-settings-content .item .settings-description {
     width: 70%; }
   #container-settings-content .item .button {
-    margin: auto 0px 0px auto; }
+    margin: auto 0px 0px auto;
+    visibility: visible; }
+  #container-settings-content .item .warning {
+    color: #b91111; }

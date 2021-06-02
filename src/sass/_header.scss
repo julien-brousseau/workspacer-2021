@@ -3,7 +3,7 @@
   align-content: center;
   align-items: flex-start;
   height: $header-height;
-  color: #AAA;
+  color: $header-color;
   background-color: $header-background-color;
   border-bottom: 1px solid $header-border-color;
 
@@ -17,5 +17,12 @@
     box-shadow: none;
     font-size: $header-title-size;
     font-weight: 500;
+  }
+
+  .ui.button.ghost {
+    flex: 0 0 $header-height;
+    width: $header-height;
+    height: $header-height;
+    font-size: 140%;
   }
 }

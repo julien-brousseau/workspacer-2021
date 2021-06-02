@@ -7,7 +7,7 @@
   }
 
   strong {
-    color: red;
+    color: $danger;
   }
 
   p {
@@ -29,7 +29,7 @@
 
   .warning {
     font-size: 16px;
-    color: red;
+    color: $danger;
     margin-top: 25px;
   }
 }

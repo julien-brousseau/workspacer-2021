@@ -1,27 +1,30 @@
-$tab-border-width: 4px;
+
 
 .tabs {
   &.pinned .tab {
-    border-color: $primary;
+    border-left: $secondary solid $tab-left-border-width;
     padding-left: 0px;
   }
 
   .tab {
-    border-left: $tab-border-width solid $header-background-color;
-    padding-left: 4px;
+    border-left: 0px none;
+    padding-left: $tab-left-border-width;
+    border-right: white solid $tab-left-border-width;
 
-    .button:first-child { margin-left: 0 !important; }
-    .button:nth-child(5) { margin-left: auto !important; }
-    
     .favIcon {
       flex: 0 0 $item-height;
       width: $item-height;
       height: $item-height;
       margin: 0px;
-      padding: 12px;
+      margin-left: -14px;
+      padding: 10px;
       border-radius: 50%;
     }
 
+    .button:first-child { margin-left: 0; }
+    .button:nth-child(5) { margin-left: auto; }
+    .button:last-child { margin-right: -5px; }
+    
     &:first-child button.ui.button.move-up, 
     &:last-child button.ui.button.move-down {
       pointer-events: none !important;

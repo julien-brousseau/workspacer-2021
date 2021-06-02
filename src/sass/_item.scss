@@ -3,8 +3,9 @@
   display: flex;
   height: $item-height;
   padding: 0;
-  border-bottom: 1px solid $item-border-color !important;
+  border-bottom: 1px solid $item-border-color;
   min-width: 0;
+  overflow: hidden;
 
   // Global vertical alignment
   & > *, & > i {
@@ -15,26 +16,20 @@
   // Title
   h2 {
     flex-grow: 1;
-    margin-left: 5px;
+    // margin-left: 5px;
     font-size: $item-title-size;
     font-weight: 500;
-    // overflow: hidden;
     white-space: nowrap;
     z-index: 1;
+    letter-spacing: 0.5px;
   }
 
-  // Actions
+  // Button positions and behavior
   .button {
     visibility: hidden;
 
-    &.pinned {
-      visibility: visible;
-      color: $secondary;
-    }
-
-    &:nth-child(3) {
-      margin-left: auto !important;
-    }
+    &.pinned { visibility: visible; }
+    &:nth-child(3) { margin-left: auto; }
   }
   
   // Shown when no workspaces or tabs
@@ -51,16 +46,25 @@
     }
   }
 
+  // 
+  &.static {
+    height: auto;
+  }
+
   // Interactive
   &.clickable { cursor: pointer; }
   
-  &:hover {
-    background-color: $item-background !important;
+  &:not(.empty):not(.static):hover {
+    background-color: $item-hover-background;
+    overflow: visible;
 
-    h2 { color: $secondary; }
+    h2 {
+      color: lighten($secondary, 30%); 
+    }
+
     .button { visibility: visible; }
   }
   
   // Disable hover for non-selectacle items
-  &.empty:hover, &.static:hover { background: none !important; }
+  // &.empty:hover, &.static:hover { background: none !important; }
 }
