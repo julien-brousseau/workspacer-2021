@@ -106,9 +106,6 @@ const Logic = {
     section.renderStatic();
   },
 
-
-  // HELPERS
-
   // Show the top message tag with auto-hide timer
   msg (text, color = 'green') {
     const colors = ['red', 'green'];
@@ -219,6 +216,8 @@ const Logic = {
 
     if (added) this.msg(`${ added } tab${ added > 1 ? 's' : '' } added`);
     else this.msg('Error: Invalid tab', 'red');
+
+    Logic.showSection('workspaces'); 
     return;
   },
   //
@@ -269,11 +268,44 @@ const Logic = {
     return browser.downloads.download({ url, filename });
   },
 
+  // Import previously exported json data (workspaces and tabs) 
+  async importAsJSON (jsonData) {
+    const { ws, tabs } = JSON.parse(jsonData);
+    const newTabs = [];
+
+    try {
+      // Create new workspace ids and assign it to tabs
+      let wsId = this.nextWorkspaceId();
+      ws.forEach(w => {
+        newTabs.push(...tabs
+          // Remove tab ID and set new workspace ID
+          .filter(t => t.wsId === w.id)
+          .map(({ tabId, ...t }) => ({ ...t, wsId })) // eslint-disable-line
+        );
+        w.id = wsId ++;
+      });
+
+      // Add to database
+      await browser.runtime.sendMessage({ type: 'CREATE_OR_EDIT_WORKSPACE', workspace: ws }); 
+      await browser.runtime.sendMessage({ type: 'CREATE_OR_EDIT_TABS', tabs: newTabs }); 
+
+      if (DEBUG) console.log('Imported workspaces :>> ', ws);
+      if (DEBUG) console.log('Imported tabs :>> ', newTabs);
+
+      this.msg('User data imported!');
+      this.showSection('workspaces'); 
+      return;
+
+    } catch (e) {
+      this.msg('Invalid data', 'red');
+      return e;
+    }
+  }
+
 };
 
 // -------------------------------------------------------------------------
 // Sections
-// TODO: Move sections to separate files ?
 
 Logic.registerSection('workspaces', {
   sectionId: 'container-workspaces',
@@ -284,6 +316,7 @@ Logic.registerSection('workspaces', {
   async render () {
     const workspaces = Logic.workspaces();
 
+    // Workspace list
     const fragment = document.createDocumentFragment();
     workspaces.forEach(workspace => {
       const { id: wsId, title, tabs, icon } = workspace;
@@ -314,10 +347,6 @@ Logic.registerSection('workspaces', {
         text: title 
       });
       
-      // Controls
-      // const btnGroup = appendElement(container, { 
-      //   classes: ['ui', 'icon', 'buttons']
-      // });
       // Add 'add tab to workspace' button
       appendElement(container, { 
         tag: 'button',
@@ -326,8 +355,7 @@ Logic.registerSection('workspaces', {
         title: 'Add current tab',
       }).addEventListener('click', async event => { 
           event.stopPropagation();
-          await Logic.addCurrentTab(workspace);
-          Logic.showSection('workspaces'); 
+          Logic.addCurrentTab(workspace);
         });
       // Add 'open in new window' button
       appendElement(container, { 
@@ -374,10 +402,9 @@ Logic.registerSection('workspace', {
     i.classList.add(...icon.split('-'), 'feature', 'icon');
 
     // Static buttons
-    // TODO: increase z-indez of popup menus
     resetElement('workspace-add-current-tab-button');
     document.getElementById('workspace-add-current-tab-button').addEventListener('click', async () => { 
-      await Logic.addCurrentTab(workspace);
+      Logic.addCurrentTab(workspace);
       Logic.showSection('workspace', { wsId }); 
     });
     resetElement('workspace-add-all-tabs-button');
@@ -553,12 +580,23 @@ Logic.registerSection('workspace-form', {
     document.getElementById('workspace-form').addEventListener('submit', async event => { 
       event.preventDefault();
 
-      // TODO: Implement proper validation
-      if (!event.target.elements[0].value) return; 
+      // TODO: Improve validation
 
-      const title = event.target.elements[0].value;
-      const icon = document.querySelector('input[name="icon-list"]:checked').value;
-      Logic.submitWorkspace({ ...workspace, title, icon });
+      // Reset errors
+      const titleField = document.getElementById('workspace-form-title-field');
+      const iconField = document.getElementById('workspace-form-icon-field');
+      titleField.classList.remove('error');
+      iconField.classList.remove('error');
+
+      // Validate fields
+      const title = document.getElementById('workspace-form-title').value;
+      if (!title) titleField.classList.add('error');
+
+      const icons = document.querySelectorAll('input[name="icon-list"]:checked');
+      if (!icons.length) iconField.classList.add('error');
+      const icon = icons.length ? icons[0].value : false;
+
+      if (title && icon) Logic.submitWorkspace({ ...workspace, title, icon });
     });
   }
 });
@@ -586,12 +624,20 @@ Logic.registerSection('tab-form', {
     document.getElementById('container-tab-form-content').addEventListener('submit', async event => { 
       event.preventDefault();
 
-      // TODO: Replace with validation
-      const title = document.getElementById('tab-form-title').value;
-      const url = document.getElementById('tab-form-url').value;
-      if (!title || !url) return;
+      // TODO: Improve validation
+      
+      // Reset errors
+      const titleField = document.getElementById('tab-form-title-field');
+      const urlField = document.getElementById('tab-form-url-field');
+      titleField.classList.remove('error');
+      urlField.classList.remove('error');
 
-      Logic.submitTab({ ...tab, title, url });
+      // Validate fields
+      const title = document.getElementById('tab-form-title').value;
+      if (!title) titleField.classList.add('error');
+      if (!url) urlField.classList.add('error');
+
+      if (title && url) Logic.submitTab({ ...tab, title, url });
     });
   }
 });
@@ -618,36 +664,8 @@ Logic.registerSection('settings', {
     resetElement('import-all-workspaces-button');
     document.getElementById('import-field').value = '';
     document.getElementById('import-all-workspaces-button').addEventListener('click', async () => { 
-      // Fetch ws and tabs from textarea
       const { value } = document.getElementById('import-field');
-      try {
-        // TODO: Extract to Logic
-        const { ws, tabs } = JSON.parse(value);
-        const newTabs = [];
-
-        // Create new workspace ids and assign it to tabs
-        let wsId = Logic.nextWorkspaceId();
-        ws.forEach(w => {
-          newTabs.push(...tabs
-            // Remove tab ID and set new workspace ID
-            .filter(t => t.wsId === w.id)
-            .map(({ tabId, ...t }) => ({ ...t, wsId })) // eslint-disable-line
-          );
-          w.id = wsId ++;
-        });
-
-        // Add to database
-        await browser.runtime.sendMessage({ type: 'CREATE_OR_EDIT_WORKSPACE', workspace: ws }); 
-        await browser.runtime.sendMessage({ type: 'CREATE_OR_EDIT_TABS', tabs: newTabs }); 
-        if (DEBUG) console.log('Imported workspaces :>> ', ws);
-        if (DEBUG) console.log('Imported tabs :>> ', newTabs);
-
-        Logic.msg('User data imported!');
-        Logic.showSection('workspaces'); 
-      } catch (e) {
-        Logic.msg('Invalid data', 'red');
-        return e;
-      }
+      Logic.importAsJSON(value);
     });
   }
 });

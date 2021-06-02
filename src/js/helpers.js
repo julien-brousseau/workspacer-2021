@@ -18,14 +18,14 @@ export const appendElement = (parent, {
 
   element.classList.add(...classes.filter(c => c && c !== ''));
 
-  // TODO: Optimize with destructuring
   if (id) element.id = id;
   if (src) element.src = src;
   if (type) element.type = type;
-  if (_for) element.setAttribute('for', _for);
   if (value) element.value = value;
   if (name) element.name = name;
+
   if (style) element.style = `{${style}}`;
+  if (_for) element.setAttribute('for', _for);
 
   parent.appendChild(element);
   return element;
