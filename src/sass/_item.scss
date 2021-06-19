@@ -6,22 +6,24 @@
   border-bottom: 1px solid $item-border-color;
   min-width: 0;
   overflow: hidden;
+  background: $item-background;
 
   // Global vertical alignment
   & > *, & > i {
     margin: auto 0px;
-    min-width: 0
+    min-width: 0;
+    color: $secondary;
   }
-
+  
   // Title
   h2 {
     flex-grow: 1;
-    // margin-left: 5px;
     font-size: $item-title-size;
     font-weight: 500;
     white-space: nowrap;
     z-index: 1;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.2px;
+    color: $secondary;
   }
 
   // Button positions and behavior
@@ -46,25 +48,13 @@
     }
   }
 
-  // 
-  &.static {
-    height: auto;
-  }
-
   // Interactive
   &.clickable { cursor: pointer; }
-  
-  &:not(.empty):not(.static):hover {
+  &:not(.empty):not(.setting):hover {
     background-color: $item-hover-background;
     overflow: visible;
-
-    h2 {
-      color: lighten($secondary, 30%); 
-    }
-
+    
+    h2 { color: lighten($secondary, 30%); }
     .button { visibility: visible; }
   }
-  
-  // Disable hover for non-selectacle items
-  // &.empty:hover, &.static:hover { background: none !important; }
 }

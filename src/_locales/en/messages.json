@@ -1,6 +1,10 @@
 {
-  "extName": {
+  "wsName": {
     "message": "Firefox Workspacer",
     "description": "Official name of the extension"
+  },
+  "wsDescription": {
+    "message": "Allows to easily record tab sets and use them as workspaces",
+    "description": "Short application description"
   }
 }

@@ -10,16 +10,17 @@ module.exports = {
   extends: ['eslint:recommended'],
   parserOptions: {
     sourceType: 'module',
+    ecmaVersion: 10,
   },
   rules: {
     'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-    semi: [2, 'always'],
-    quotes: ['error', 'single'],
+    'semi': [2, 'always'],
+    'quotes': ['error', 'single'],
     'key-spacing': ['error', { 'beforeColon': false }],
     'object-curly-spacing': ['error', 'always', { 'arraysInObjects': false }],
     'space-in-parens': ['error', 'never'],
     'brace-style': ['error', '1tbs', { 'allowSingleLine': true }],
-    'space-before-function-paren': ['error', 'always']
+    'space-before-function-paren': ['error', 'always'],
   },
 };

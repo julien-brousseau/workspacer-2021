@@ -1,5 +1,4 @@
 <html>
-  
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <title>Firefox Workspacer</title>
@@ -8,15 +7,15 @@
   </head>
 
   <body>
-
+    <!-- Top message label -->
     <div id="msg"><div class="ui large label hide"></div></div>
 
-    <!-- View all workspaces -->
+    <!-- List all workspaces -->
     <div id="container-workspaces" class="container hide">
       <div id="container-workspaces-header" class="container-header home">
         <h1>My workspaces</h1>
-        <button id="new-workspace-button" class="ui ghost icon cta button" title="Create a new workspace"><i class="plus square outline icon"></i></button>
-        <button id="settings-button" class="ui ghost icon button" title="Extension settings"><i class="cog icon"></i></button>
+        <button id="new-workspace-button" class="ui wsBtn icon cta button" title="Create a new workspace"><i class="plus square outline icon"></i></button>
+        <button id="settings-button" class="ui wsBtn icon button" title="Extension settings"><i class="cog icon"></i></button>
       </div>
       <div id="container-workspaces-content"></div>
     </div>
@@ -24,13 +23,13 @@
     <!-- View a single workspace -->
     <div id="container-workspace" class="container hide">
       <div id="container-workspace-header" class="container-header">
-        <button id="workspace-back-button" class="ui ghost icon button" title="Back to workspaces"><i class="chevron left icon"></i></button>
+        <button id="workspace-back-button" class="ui wsBtn icon button" title="Back to workspaces"><i class="chevron left icon"></i></button>
         <i id="workspace-title-icon" class="feature icon"></i>
         <h1 id="workspace-title">
           WORKSPACE
         </h1>
         <!-- Controls -->
-        <button class="ui ghost icon dropdown button" title="Add tabs to this workspace">
+        <button class="ui wsBtn icon dropdown button" title="Add tabs to this workspace">
           <i class="plus icon"></i>
           <div class="menu">
             <div class="item" id="workspace-add-current-tab-button" title="Add current tab to workspace">Current tab</div>
@@ -39,7 +38,7 @@
           </div>
         </button>
         
-        <button class="ui ghost icon dropdown button" title="Open all tabs from this workspace">
+        <button class="ui wsBtn icon dropdown button" title="Open all tabs from this workspace">
           <i class="window restore icon"></i>
           <div class="menu">
             <div class="item" id="workspace-open-in-new-window-button" title="Open all tabs in a new window">Open in a new window</div>
@@ -47,7 +46,7 @@
           </div>
         </button>
         
-        <button class="ui ghost icon dropdown button" title="More actions">
+        <button class="ui wsBtn icon dropdown button" title="More actions">
           <i class="bars icon"></i>
           <div class="menu">
             <div class="item" id="workspace-rename-button" title="Change current workspace's name">Rename workspace</div>
@@ -60,17 +59,17 @@
       <div id="container-workspace-tablist"></div>
     </div>
 
-    <!-- Workspace form for create/edit -->
+    <!-- Workspace form for CREATE or EDIT -->
     <div id="container-workspace-form" class="container hide">
       <div id="container-workspace-form-header" class="container-header">
-        <button id="workspace-form-back-button" class="ui ghost icon back button" title="Back to workspaces"><i class="chevron left icon"></i></button>
+        <button id="workspace-form-back-button" class="ui wsBtn icon back button" title="Back to workspaces"><i class="chevron left icon"></i></button>
         <h1 id="workspace-form-header-title">New workspace</h1>
       </div>
       <div id="container-workspace-form-content">
         <form id="workspace-form" class="ui form basic" autocomplete="off">
           <div id="workspace-form-title-field" class="field">
             <label>Workspace name</label>
-            <input id="workspace-form-title" name="title" type="text" placeholder="Ex: School">
+            <input id="workspace-form-title" name="title" type="text" placeholder="Ex: School" maxlength="45">
           </div>
           <div id="workspace-form-icon-field" class="field">
             <label>Icon</label>
@@ -81,10 +80,10 @@
       </div>
     </div>
 
-    <!-- Tab form for edit -->
+    <!-- Tab form for EDIT (no custom CREATE) for tabs -->
     <div id="container-tab-form" class="container hide">
       <div id="container-tab-form-header" class="container-header">
-        <button id="tab-form-back-button" class="ui ghost icon back button" title="Cancel modifications"><i class="chevron left icon"></i></button>
+        <button id="tab-form-back-button" class="ui wsBtn icon back button" title="Cancel modifications"><i class="chevron left icon"></i></button>
         <h1>Edit tab</h1>
       </div>
       <form id="container-tab-form-content" class="ui form basic" autocomplete="off">
@@ -100,55 +99,60 @@
       </form>
     </div>
 
-    <!-- App settings -->
+    <!-- App settings page -->
     <div id="container-settings" class="container hide">
       <div id="container-settings-header" class="container-header">
-        <button id="settings-back-button" class="ui ghost icon back button" title="Exit settings"><i class="chevron left icon"></i></button>
+        <button id="settings-back-button" class="ui wsBtn icon back button" title="Exit settings"><i class="chevron left icon"></i></button>
         <h1>Extension settings</h1>
       </div>
       <div id="container-settings-content">
-        <div class="item static">
+        <div class="item setting">
           <div class="settings-description">
             <h2>Export user data</h2>
-            <p>Export all workspaces and tab data as a .json file in your Downloads folder.</p>
-          </div>
-          <button id="export-all-workspaces-button" class="ui secondary button" title="Export your current user data">Export</button>
-        </div>
-        <div class="ui form item static">
-          <div class="settings-description">
-            <h2>Import user data</h2>
-            <p>Import the content of a previously exported .json file by copy/pasting its content in the field.</p>
-            <div class="field">
-              <textarea id="import-field" rows="3" placeholder="Paste .json file contents here"></textarea>
+            <div style="display: flex;">
+              <p>Export all workspaces and tab data as a .json file in your Downloads folder.</p>
+              <button id="export-all-workspaces-button" class="ui secondary button" title="Export your current user data">Export</button>
             </div>
           </div>
-          <button id="import-all-workspaces-button" class="ui secondary button" title="Import field content in your workspaces">Import</button>
+        </div>
+        <div class="ui form item setting">
+          <div class="settings-description">
+            <h2>Import user data</h2>
+            <div style="display: flex;">
+              <p>Import the content of a previously exported .json file by copy/pasting its content in the field below.</p>
+              <button id="import-all-workspaces-button" class="ui secondary button" title="Import field content in your workspaces">Import</button>
+            </div>
+            <div class="field">
+              <textarea id="import-field" rows="2" placeholder="Paste .json file contents here"></textarea>
+            </div>
+          </div>
         </div> 
-        <div class="item static">
+        <div class="item setting">
           <div class="settings-description">
             <h2 class="warning">Delete everything</h2>
-            <p class="warning">Warning: This operation is irreversible! Please make sure to manually export your current data before clicking.</p>
+            <div style="display: flex;">
+              <p class="warning">Warning: This operation is irreversible!<br>Please make sure to previously export your current data.</p>
+              <button id="delete-all-workspaces-button" class="ui red button" title="Delete all your workspaces and tabs">Delete</button>
+            </div>
           </div>
-          <button id="delete-all-workspaces-button" class="ui red button" title="Delete all your workspaces and tabs">Clear</button>
         </div>
       </div>
     </div>
 
-    <!-- Confirmation -->
+    <!-- Confirmation screen -->
     <div id="container-confirm" class="container hide">
       <div id="container-confirm-header" class="container-header">
-        <button id="confirm-back-button" class="ui ghost icon back button" title="Cancel"><i class="chevron left icon"></i></button>
-        <h1></h1>
+        <button id="confirm-back-button" class="ui wsBtn icon back button" title="Cancel"><i class="chevron left icon"></i></button>
+        <h1 id="confirm-title"></h1>
       </div>
 
       <div id="container-confirm-content">
-        <h2 id="confirm-title">Blop</h2>
-        <p id="confirm-text">Blop</p>
+        <p id="confirm-text"></p>
+        <p class="warning">Warning: This operation is irreversible</p>
         <div>
           <button id="confirm-accept-button" class="ui red button" title="">Confirm</button>
           <button id="confirm-cancel-button" class="ui secondary button" title="">Cancel</button>
         </div>
-        <p class="warning">Warning: This operation is irreversible</p>
       </div>
     </div>
 

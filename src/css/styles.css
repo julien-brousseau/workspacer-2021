@@ -1,5 +1,6 @@
 html {
-  height: 500px;
+  height: 550px;
+  background-color: #1f2730;
   scrollbar-width: none;
   -ms-overflow-style: none; }
   html::-webkit-scrollbar {
@@ -14,13 +15,12 @@ body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
   -webkit-font-smoothing: antialiased !important;
   -moz-osx-font-smoothing: grayscale !important;
-  color: #293b4d; }
+  color: #1f2730; }
 
 .form {
   padding: 15px; }
-
-form .field {
-  margin-bottom: 15px !important; }
+  .form .field {
+    margin-bottom: 15px !important; }
 
 .icon.feature {
   width: 36px;
@@ -41,7 +41,7 @@ form .field {
   #workspace-form-icons input[type="radio"].ico {
     display: none; }
     #workspace-form-icons input[type="radio"].ico:checked + .ico-label i {
-      color: #3ac1ff; }
+      color: #1f2730; }
 
 #msg {
   position: absolute;
@@ -63,7 +63,7 @@ form .field {
 .container {
   min-height: 100%; }
 
-.ui.button.ghost {
+.ui.button.wsBtn {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -77,41 +77,41 @@ form .field {
   border-radius: 0px;
   text-align: center;
   background: none;
-  color: #777;
+  color: #1f2730;
   font-size: 85%; }
-  .ui.button.ghost.dropdown.active.visible, .ui.button.ghost.dropdown.active.visible:active {
+  .ui.button.wsBtn.dropdown.active.visible, .ui.button.wsBtn.dropdown.active.visible:active {
     color: white;
-    background-color: #1b1c1d;
+    background-color: #1f2730 !important;
     z-index: 999; }
-  .ui.button.ghost.icon {
+  .ui.button.wsBtn.icon {
     padding: 0px; }
-    .ui.button.ghost.icon i {
+    .ui.button.wsBtn.icon i {
       margin: 0px; }
-  .ui.button.ghost.chain {
-    color: #293b4d;
+  .ui.button.wsBtn.chain {
+    color: #1f2730;
     background: white;
     border-left: 1px solid #EEEEEE; }
-  .ui.button.ghost.cta {
-    color: #3ac1ff;
-    font-size: 160% !important; }
-  .ui.button.ghost.pin {
+  .ui.button.wsBtn.cta {
+    color: #00aeff;
+    font-size: 190% !important; }
+  .ui.button.wsBtn.pin {
+    max-width: 30px;
+    padding-right: 3;
     font-size: 85%;
     color: #cecece; }
-  .ui.button.ghost.pin.pinned {
-    color: #293b4d; }
-  .ui.button.ghost:hover, .ui.button.ghost:focus, .ui.button.ghost:active, .ui.button.ghost.active {
+  .ui.button.wsBtn.pin.pinned {
+    color: #1f2730; }
+  .ui.button.wsBtn:hover, .ui.button.wsBtn:focus, .ui.button.wsBtn:active, .ui.button.wsBtn.active {
     color: white; }
-    .ui.button.ghost:hover i, .ui.button.ghost:focus i, .ui.button.ghost:active i, .ui.button.ghost.active i {
+    .ui.button.wsBtn:hover i, .ui.button.wsBtn:focus i, .ui.button.wsBtn:active i, .ui.button.wsBtn.active i {
       font-size: 111%; }
-    .ui.button.ghost:hover.chain, .ui.button.ghost:focus.chain, .ui.button.ghost:active.chain, .ui.button.ghost.active.chain {
-      background: #293b4d; }
-    .ui.button.ghost:hover.cta, .ui.button.ghost:focus.cta, .ui.button.ghost:active.cta, .ui.button.ghost.active.cta {
-      background-color: #3ac1ff; }
-    .ui.button.ghost:hover.danger, .ui.button.ghost:focus.danger, .ui.button.ghost:active.danger, .ui.button.ghost.active.danger {
+    .ui.button.wsBtn:hover.chain, .ui.button.wsBtn:focus.chain, .ui.button.wsBtn:active.chain, .ui.button.wsBtn.active.chain {
+      background: #1f2730; }
+    .ui.button.wsBtn:hover.danger, .ui.button.wsBtn:focus.danger, .ui.button.wsBtn:active.danger, .ui.button.wsBtn.active.danger {
       background-color: #b91111; }
-    .ui.button.ghost:hover.pin, .ui.button.ghost:focus.pin, .ui.button.ghost:active.pin, .ui.button.ghost.active.pin {
-      color: #293b4d; }
-    .ui.button.ghost:hover.pinned, .ui.button.ghost:focus.pinned, .ui.button.ghost:active.pinned, .ui.button.ghost.active.pinned {
+    .ui.button.wsBtn:hover.pin, .ui.button.wsBtn:focus.pin, .ui.button.wsBtn:active.pin, .ui.button.wsBtn.active.pin {
+      color: #1f2730; }
+    .ui.button.wsBtn:hover.pinned, .ui.button.wsBtn:focus.pinned, .ui.button.wsBtn:active.pinned, .ui.button.wsBtn.active.pinned {
       color: #b91111; }
 
 .container-header {
@@ -119,9 +119,8 @@ form .field {
   align-content: center;
   align-items: flex-start;
   height: 50px;
-  color: #CCC;
-  background-color: #1b1c1d;
-  border-bottom: 1px solid #000; }
+  background: linear-gradient(180deg, #1e242b 0%, #1f2730 100%);
+  border-bottom: 1px solid #1f2730; }
   .container-header.home {
     padding-left: 20px !important; }
   .container-header h1 {
@@ -129,12 +128,20 @@ form .field {
     margin-left: 0px;
     box-shadow: none;
     font-size: 16px;
-    font-weight: 500; }
-  .container-header .ui.button.ghost {
+    font-weight: 600;
+    color: #dfe3e9;
+    line-height: 16px; }
+  .container-header #workspace-title-icon {
+    margin-left: -12px;
+    color: #dfe3e9; }
+  .container-header .ui.button.wsBtn {
     flex: 0 0 50px;
     width: 50px;
     height: 50px;
-    font-size: 140%; }
+    font-size: 140%;
+    color: #5d6f85; }
+    .container-header .ui.button.wsBtn:hover {
+      color: #dfe3e9; }
 
 .item {
   position: relative;
@@ -143,17 +150,20 @@ form .field {
   padding: 0;
   border-bottom: 1px solid #EEEEEE;
   min-width: 0;
-  overflow: hidden; }
+  overflow: hidden;
+  background: white; }
   .item > *, .item > i {
     margin: auto 0px;
-    min-width: 0; }
+    min-width: 0;
+    color: #1f2730; }
   .item h2 {
     flex-grow: 1;
     font-size: 14px;
     font-weight: 500;
     white-space: nowrap;
     z-index: 1;
-    letter-spacing: 0.5px; }
+    letter-spacing: 0.2px;
+    color: #1f2730; }
   .item .button {
     visibility: hidden; }
     .item .button.pinned {
@@ -169,20 +179,18 @@ form .field {
     .item.empty h2 {
       font-weight: 400 !important;
       margin: auto; }
-  .item.static {
-    height: auto; }
   .item.clickable {
     cursor: pointer; }
-  .item:not(.empty):not(.static):hover {
+  .item:not(.empty):not(.setting):hover {
     background-color: #FAFAFA;
     overflow: visible; }
-    .item:not(.empty):not(.static):hover h2 {
-      color: #6388ac; }
-    .item:not(.empty):not(.static):hover .button {
+    .item:not(.empty):not(.setting):hover h2 {
+      color: #5b738d; }
+    .item:not(.empty):not(.setting):hover .button {
       visibility: visible; }
 
 .tabs.pinned .tab {
-  border-left: #293b4d solid 4px;
+  border-left: #1f2730 solid 4px;
   padding-left: 0px; }
 
 .tabs .tab {
@@ -194,8 +202,8 @@ form .field {
     width: 36px;
     height: 36px;
     margin: 0px;
-    margin-left: -14px;
-    padding: 10px;
+    margin-left: -10px;
+    padding: 7px;
     border-radius: 50%; }
   .tabs .tab .button:first-child {
     margin-left: 0; }
@@ -211,40 +219,47 @@ form .field {
 
 /* Section - Workspace details */
 #container-confirm-content {
-  padding: 30px; }
-  #container-confirm-content * {
-    text-align: center; }
-  #container-confirm-content strong {
-    color: #b91111; }
+  padding: 15px; }
   #container-confirm-content p {
     font-size: 16px; }
+  #container-confirm-content strong {
+    color: #b91111; }
+  #container-confirm-content span {
+    font-weight: bold; }
   #container-confirm-content ul {
     list-style: none;
-    padding: 10px 0px; }
-  #container-confirm-content li {
-    border-bottom: 1px solid #CCC;
-    padding: 10px; }
-    #container-confirm-content li:last-child {
-      border: 0px none; }
+    margin-top: 0px;
+    padding: 10px 0px;
+    font-size: 14px; }
+    #container-confirm-content ul li {
+      display: flex;
+      padding: 5px; }
+      #container-confirm-content ul li img {
+        width: 15px;
+        margin-right: 7px; }
   #container-confirm-content .warning {
     font-size: 16px;
     color: #b91111;
     margin-top: 25px; }
 
 #container-settings-content .item {
-  padding: 12px;
-  border-color: black !important; }
+  padding: 20px 12px;
+  height: auto; }
   #container-settings-content .item h2 {
-    font-weight: 700; }
+    font-weight: 700;
+    font-size: 15px;
+    margin-bottom: 2px; }
   #container-settings-content .item p {
     padding: 0px;
     margin: 0px; }
-  #container-settings-content .item .field {
-    padding: 6px; }
-  #container-settings-content .item .settings-description {
-    width: 70%; }
+  #container-settings-content .item:last-child {
+    border: 0px none !important; }
   #container-settings-content .item .button {
-    margin: auto 0px 0px auto;
+    min-width: 130px;
+    height: 38px;
+    margin-left: 15px;
     visibility: visible; }
   #container-settings-content .item .warning {
     color: #b91111; }
+  #container-settings-content .item .field {
+    padding: 6px 0px; }

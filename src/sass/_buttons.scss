@@ -1,4 +1,4 @@
-.ui.button.ghost {
+.ui.button.wsBtn {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -14,12 +14,12 @@
   border-radius: 0px;
   text-align: center;
   background: none;
-  color: $btn-ghost-color;
+  color: $wsBtn-color;
   font-size: 85%;
 
   &.dropdown.active.visible, &.dropdown.active.visible:active {
     color: white;
-    background-color: $header-background-color;
+    background-color: $btn-invert-background !important;
     z-index: 999;
   }
 
@@ -38,13 +38,15 @@
   // Add new workspace
   &.cta {
     color: $primary;
-    font-size: 160% !important;
+    font-size: 190% !important;
   }
 
   // Add new workspace
   &.pin {
+    max-width: 30px;
+    padding-right: 3;
     font-size: 85%;
-    color: $btn-ghost-light-color;
+    color: $wsBtn-light-color;
   }
   &.pin.pinned {
     color: $secondary;
@@ -53,10 +55,10 @@
   &:hover, &:focus, &:active, &.active {
     color: white;
     
-    i { font-size: $btn-ghost-hover-size; }
+    i { font-size: $wsBtn-hover-size; }
 
     &.chain { background: $secondary; }
-    &.cta { background-color: $primary; }
+    // &.cta { background-color: $primary; }
     &.danger { background-color: $danger; }
     &.pin { color: $secondary; }
     &.pinned { color: $danger; }

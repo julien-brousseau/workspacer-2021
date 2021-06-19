@@ -1,5 +1,6 @@
 html {
   height: $app-height; 
+  background-color: $btn-invert-background;
 
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -22,10 +23,10 @@ body {
 
 .form {
   padding: 15px;
-}
-
-form .field {
-  margin-bottom: 15px !important;
+  
+  .field {
+    margin-bottom: 15px !important;
+  }
 }
 
 // Main item/header icon
@@ -36,6 +37,7 @@ form .field {
   font-size: 18px;
 }
 
+// This should be elsewhere
 #workspace-form-icons {
   display: flex;
   flex-wrap: wrap;
@@ -53,12 +55,13 @@ form .field {
   input[type="radio"].ico {
     display: none;
     &:checked + .ico-label i {
-      color: $primary;
+      color: $secondary;
     }
   }
 
 }
 
+// Top message
 #msg {
   position: absolute;
   top: -3px;
@@ -71,15 +74,9 @@ form .field {
   max-width: calc(#{$app-width} / 2);
 }
 
-.hide {
-  display: none !important;
-}
+// Global visibility helpers
+.hide { display: none !important; }
+.hidden { visibility: hidden !important; }
 
-.hidden {
-  visibility: hidden !important;
-}
-
-// Section wrapper
-.container {
-  min-height: 100%;
-}
+// Full-width section wrapper
+.container { min-height: 100%; }

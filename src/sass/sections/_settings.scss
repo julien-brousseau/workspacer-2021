@@ -1,9 +1,11 @@
 #container-settings-content .item {
-  padding: 12px;
-  border-color: black !important;
+  padding: 20px 12px;
+  height: auto;
 
   h2 {
     font-weight: 700;
+    font-size: 15px;
+    margin-bottom: 2px;
   }
 
   p {
@@ -11,21 +13,15 @@
     margin: 0px;
   }
 
-  .field {
-    padding: 6px;
-  }
+  &:last-child { border: 0px none !important; }
 
-  .settings-description {
-    width: 70%;
-  }
-  
   .button {
-    margin: auto 0px 0px auto;
+    min-width: 130px;
+    height: 38px;
+    margin-left: 15px;
     visibility: visible;
   }
 
-  .warning {
-    color: $danger;
-  }
-  
+  .warning { color: $danger; } 
+  .field { padding: 6px 0px; }
 }
