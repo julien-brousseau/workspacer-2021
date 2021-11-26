@@ -3,7 +3,7 @@
   "name": "__MSG_wsName__",
   "homepage_url": "https://github.com/julien-brousseau/workspacer",
   "description": "__MSG_wsDescription__",
-  "version": "1.2.0",
+  "version": "1.2.2",
   "icons": { "48": "/icons/48.svg" },
   "default_locale": "en",
   
