@@ -183,7 +183,7 @@ const Logic = {
   async openTabs (tabs, currentWindow = false) {
     if (!tabs.length) return;
     await browser.runtime.sendMessage({ type: 'OPEN_WORKSPACE', tabs, currentWindow });
-    return;
+    window.close();
   },
 
   // Create stuff
