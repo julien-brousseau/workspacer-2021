@@ -21,6 +21,16 @@ body {
   color: $secondary;
 }
 
+.container { 
+  position: absolute;
+  width: 100%; 
+  min-height: 100%;
+  opacity: 1;
+  z-index: 5;
+
+  &.hide { opacity: 0 !important; z-index: 1; }
+}
+
 .form {
   padding: 15px;
   
@@ -43,10 +53,12 @@ body {
   flex-wrap: wrap;
 
   .ico-label i {
+    position: relative;
     color: #DDD;
     font-size: 26px;
     cursor: pointer;
     margin: 10px;
+    transition: $wsBtn-transition;
     &:hover {
       color: #AAA;
     }
@@ -56,6 +68,17 @@ body {
     display: none;
     &:checked + .ico-label i {
       color: $secondary;
+      // &::after {
+      //   content: '';
+      //   display: block;
+      //   position: absolute;
+      //   background-color: $secondary;
+      //   border-radius: 8px;
+      //   top: -9px;
+      //   left: -5px;
+      //   width: 41px;
+      //   height: 40px;
+      // }
     }
   }
 
@@ -67,16 +90,16 @@ body {
   top: -3px;
   width: 100%;
   text-align: center;
+  z-index: 9999;
+  pointer-events: none;
 }
 #msg .label {
   width: auto; 
+  position: relative;
+  top: 0;
   text-align: center;
-  max-width: calc(#{$app-width} / 2);
+  max-width: calc(#{$app-width} - 50px);
+  transition: $msg-transition;
+
+  &.hide { top: -30px; }
 }
-
-// Global visibility helpers
-.hide { display: none !important; }
-.hidden { visibility: hidden !important; }
-
-// Full-width section wrapper
-.container { min-height: 100%; }

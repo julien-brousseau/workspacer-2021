@@ -16,10 +16,15 @@
   background: none;
   color: $wsBtn-color;
   font-size: 85%;
+  transition: $wsBtn-transition;
+    
+  i:before { transition: $wsBtn-transition; }
+
+  &.dropdown.active { background-color: $btn-invert-background; }
 
   &.dropdown.active.visible, &.dropdown.active.visible:active {
-    color: white;
-    background-color: $btn-invert-background !important;
+    color: $wsBtn-light-color;
+    background-color: $btn-invert-background;
     z-index: 999;
   }
 
@@ -37,7 +42,7 @@
   
   // Add new workspace
   &.cta {
-    color: $primary;
+    // color: $primary !important;
     font-size: 190% !important;
   }
 
@@ -51,16 +56,25 @@
   &.pin.pinned {
     color: $secondary;
   }
+  
+  // 
+  &.move {
+    position: relative;
+    height: 18px;
+    &.up { left: 36px; }
+    &.down { top: 18px; }
+  }
 
   &:hover, &:focus, &:active, &.active {
     color: white;
     
-    i { font-size: $wsBtn-hover-size; }
+    i:before { font-size: $wsBtn-hover-size; }
 
     &.chain { background: $secondary; }
     // &.cta { background-color: $primary; }
     &.danger { background-color: $danger; }
     &.pin { color: $secondary; }
     &.pinned { color: $danger; }
+    &.top i:before { font-size: $wsBtn-top-hover-size; }
   }
 }

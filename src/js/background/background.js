@@ -2,13 +2,13 @@ import { initDb } from '../db/jsstore.js';
 import * as db from '../db/methods.js';
 
 initDb();
-
 browser.runtime.onMessage.addListener(handleMessageFromBackground);
 
 async function handleMessageFromBackground (action) {
   // Fetch
   if (action.type === 'FETCH_ALL_WORKSPACES') {
-    return await db.fetchAllWorkspaces();
+    const identities = await fetchBrowserContainers();
+    return await db.fetchAllWorkspaces(identities);
 
   // Create/edit
   } else if (action.type === 'CREATE_OR_EDIT_WORKSPACE') {
@@ -49,6 +49,15 @@ async function handleMessageFromBackground (action) {
   } else if (action.type === 'OPEN_WORKSPACE') {
     const { currentWindow, tabs } = action;
     openTabsInWindow(tabs, currentWindow);
+
+  } else if (action.type === 'OPEN_TABS') {
+    const { tabs } = action;
+    const windowId = (await browser.windows.getCurrent()).id;
+    await createTabs(windowId, tabs.map(t => ({ ...t, pinned: false })));
+
+    // Focus last created tab
+    const browserTabs = await browser.tabs.query({});
+    await browser.tabs.update(browserTabs.at(-1).id, { active: true });
     
   } else {
     console.log('ACTION NOT FOUND');
@@ -59,7 +68,7 @@ async function handleMessageFromBackground (action) {
 async function getCurrentTab () {
   return browser.tabs.query({ currentWindow: true, active: true })
     .then(([tab]) => {
-      // Exclude invalid tabs
+      // Warn if invalid tab
       if (tab.url.slice(0, 6) === 'about:') {
         console.log('Warning: Pages using about: protocol cannot be saved in workspaces');
         return false;
@@ -73,18 +82,19 @@ async function getCurrentTab () {
 async function fetchAllTabsFromWindow () {
   return browser.tabs.query({ currentWindow: true })
     .then(tabs => tabs
+      // Ignore settings/config pages
       .filter(t => t.url.slice(0, 6) !== 'about:')
       .map(t => filterRawTab(t)))
-    .catch(e => console.log('Error > fetchAllTabsFromWindow :>> ', e));
+    .catch(e => console.log('Error > fetchAllTabsFromWindow >> ', e));
 }
 
 // Filter out un-necessary props from a browser's tab object
 function filterRawTab (tab) {
-  const props = ['title', 'url', 'pinned', 'discarded', 'favIconUrl'];
+  const props = ['title', 'url', 'pinned', 'discarded', 'favIconUrl', 'cookieStoreId'];
   return props.reduce((filteredProps, prop) => ({ ...filteredProps, [prop]: tab[prop] }), {});
 }
 
-// Query browser to create a new window containing [tabs]
+// Open a list of tabs in a prepared window
 async function openTabsInWindow (tabs, currentWindow = false) {
   // Select the target window
   const window = currentWindow
@@ -94,21 +104,56 @@ async function openTabsInWindow (tabs, currentWindow = false) {
   // List of tabs to remove (previous tabs in current window or empty tab in new window)
   const tabsToRemove = window.tabs.map(t => t.id);
 
-  // Props to filter out from tab object
-  const conflictingProps = ['tabId', 'position', 'wsId', 'favIconUrl'];
+  // Create tabs in specified window
+  await createTabs(window.id, tabs);
 
-  // Create a new tabs
-  await tabs.forEach(tab => {
+  // Clear un-needed tabs
+  browser.tabs.remove(tabsToRemove);
+}
+
+// Query browser to create tabs in selected window
+async function createTabs (windowId, tabs) {
+  // Props to remove from tab object to prevent browser rejection
+  // Note: Although cookieStoreId can used, it's safer to add it manually after browser check
+  const conflictingProps = ['tabId', 'position', 'wsId', 'favIconUrl', 'cookieStoreId', 'cookieStoreName'];
+
+  // Fetch all of browser's containers ids
+  const identities = await fetchBrowserContainers(true);
+  
+  // Create new tabs
+  return await tabs.forEach(tab => {
+    // Set a container only if it exists in browser
+    const identity = identities.includes(tab.cookieStoreId) 
+      ? { cookieStoreId: tab.cookieStoreId } 
+      : {};
     browser.tabs.create({
+      // Set window in which tabs are created
+      windowId,
       // Remove properties conflicting with browser tab creation
-      ...Object.keys(tab).reduce((obj, prop) => !conflictingProps.includes(prop) ? { ...obj, [prop]: tab[prop] } : { ...obj }, {}),
-      windowId: window.id,
+      ...Object.keys(tab)
+        .reduce((obj, prop) => !conflictingProps.includes(prop) 
+          ? { ...obj, [prop]: tab[prop] } 
+          : { ...obj },
+        {}),
       // Force title only for undiscarded tabs
       title: tab.discarded ? tab.title : null,
       // Auto-discard tab if not pinned
-      discarded: !tab.pinned
+      discarded: !tab.pinned,
+      // Add verified cookieStoreId if valid
+      ...identity
     });
   });
-  // Clear un-needed tabs
-  browser.tabs.remove(tabsToRemove);
+}
+
+// Fetch all of browser's containers ids (cookieStoreId), 
+//  or empty array if containers feature is unavailable
+async function fetchBrowserContainers (idOnly = false) {
+  try { 
+    const identities = await browser.contextualIdentities.query({}); 
+    return idOnly ? identities.map(i => i.cookieStoreId) : identities;
+
+  } catch(e) { 
+    console.log('Browser identities unavailable');
+    return []; 
+  }
 }

@@ -24,7 +24,7 @@ export const appendElement = (parent, {
   if (value) element.value = value;
   if (name) element.name = name;
 
-  if (style) element.style = `{${style}}`;
+  if (style) element.style = style;
   if (_for) element.setAttribute('for', _for);
 
   parent.appendChild(element);

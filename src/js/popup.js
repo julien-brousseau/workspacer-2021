@@ -179,9 +179,20 @@ const Logic = {
     this.showSection('workspace', { wsId: tab.wsId });
   },
   
-  // Open tabs in a window
+  // Open a single tab or a workspace in browser
+  // TODO: Optimize
   async openTabs (tabs, currentWindow = false) {
-    if (!tabs.length) return;
+    // Single tab
+    if (typeof(tabs) !== Array && tabs.wsId) {
+      await browser.runtime.sendMessage({ type: 'OPEN_TABS', tabs: [tabs]});
+      window.close();
+      return;
+
+    // Workspace's tabs
+    } else if (!tabs.length) {
+      this.msg('This workspace is empty', 'red');
+      return;
+    }
     await browser.runtime.sendMessage({ type: 'OPEN_WORKSPACE', tabs, currentWindow });
     window.close();
   },
@@ -333,6 +344,16 @@ Logic.registerSection('workspaces', {
           const added = await Logic.addCurrentTab(workspace);
           if (added) Logic.showSection('workspaces');
         });
+      // Add 'replace current window' button
+      appendElement(container, { 
+        tag: 'button',
+        text: '<i class="expand arrows alternate icon"></i>',
+        classes: ['ui', 'wsBtn', 'chain', 'icon', 'button'],
+        title: 'Replace current window',
+      }).addEventListener('click', async event => { 
+          event.stopPropagation();
+          Logic.openTabs(tabs, true);
+        });
       // Add 'open in new window' button
       appendElement(container, { 
         tag: 'button',
@@ -395,6 +416,8 @@ Logic.registerSection('workspace', {
         await Logic.deleteTabs(tabs);
         const added = await Logic.addCurrentTab(workspace, true);
         if (added) Logic.showSection('workspace', { wsId }); 
+      } else {
+        Logic.showSection('workspace', { wsId });
       }
     });
     resetElement('workspace-open-in-new-window-button');
@@ -429,16 +452,19 @@ Logic.registerSection('workspace', {
       }
     });
 
-    // Containers for pinned/unpinned tabs
+    // Tabs are divided in 2 containers depending on pinned status to simplify sorting
     const pinnedTabsContainer = appendElement(fragment, { classes: ['tabs', 'pinned']});
     const tabsContainer = appendElement(fragment, { classes: ['tabs']});
 
     // Tab list
     tabs.forEach(tab => {
-      const { title, tabId, favIconUrl: icon, pinned } = tab;
+      const { title, url, tabId, favIconUrl: icon, pinned, cookieStoreName } = tab;
+      // Show tab url/container on html title element
+      const desc = url + (cookieStoreName ? '\nContainer: ' + cookieStoreName : '');
+
       const container = appendElement(
         pinned ? pinnedTabsContainer : tabsContainer, 
-        { classes: ['item', 'tab']}
+        { classes: ['item', 'tab'], title: desc }
       );
 
       // Append pin button
@@ -453,29 +479,45 @@ Logic.registerSection('workspace', {
       appendElement(container, { 
         tag: icon ? 'img' : 'div',
         classes: ['favIcon', !icon ? 'empty' : ''],
-        src: icon ? icon : null
+        src: icon ? icon : null,
+        title: desc
       });
+
       // Append title
       appendElement(container, { 
         tag: 'h2', 
         text: title, 
-        classes: ['title']
+        classes: ['title'],
+        title: desc
       });
 
       // Move up
       appendElement(container, { 
         tag: 'button',
         text: '<i class="caret up icon"></i>',
-        classes: ['ui', 'wsBtn', 'icon', 'chain', 'button', 'move-up'],
+        classes: ['ui', 'wsBtn', 'icon', 'chain', 'button', 'move', 'up'],
         title: 'Move up'
       }).addEventListener('click', () => Logic.moveTab(tab, 'up')); 
+      
       // Move down
       appendElement(container, { 
         tag: 'button',
         text: '<i class="caret down icon"></i>',
-        classes: ['ui', 'wsBtn', 'icon', 'chain', 'button', 'move-down'],
+        classes: ['ui', 'wsBtn', 'icon', 'chain', 'button', 'move', 'down'],
         title: 'Move down'
       }).addEventListener('click', () => Logic.moveTab(tab, 'down')); 
+      
+      // Open
+      appendElement(container, {
+        tag: 'button',
+        text: '<i class="paper plane icon"></i>',
+        classes: ['ui', 'wsBtn', 'icon', 'chain', 'button'],
+        title: 'Open this tab'
+      }).addEventListener('click', async event => { 
+        event.stopPropagation();
+        Logic.openTabs(tab, true);
+      });
+      
       // Modify
       appendElement(container, {
         tag: 'button',
@@ -483,6 +525,7 @@ Logic.registerSection('workspace', {
         classes: ['ui', 'wsBtn', 'icon', 'chain', 'button'],
         title: 'Modify tab info'
       }).addEventListener('click', () => Logic.showSection('tab-form', { tabId })); 
+      
       // Delete
       appendElement(container, {
         tag: 'button',
@@ -520,13 +563,13 @@ Logic.registerSection('workspace-form', {
       'compass', 'folder outline', 'pencil alternate', 'tag', 'shield alternate', 'comments', 'paper plane', 'server', 
       'tv', 'dollar sign', 'eye slash outline', 'tint', 'file outline', 'heart outline', 'calculator', 'cloud', 'flag outline', 'user outline'];
     
-    // Title
+    // Form title label
     document.getElementById('workspace-form-header-title').innerHTML = id ? 'Edit existing workspace' : 'Create new workspace';
     
-    // Fields
+    // Workspace title field
     document.getElementById('workspace-form-title').value = id ? title : '';
 
-    // Icon picker
+    // Workspace icon-picker field
     const iconList = document.getElementById('workspace-form-icons');
     iconList.innerHTML = '';
     icons.forEach(i => {
@@ -578,6 +621,9 @@ Logic.registerSection('workspace-form', {
         else Logic.showSection('workspaces');
       }
     });
+
+    // Focus on title field
+    document.getElementById('workspace-form-title').focus();
   }
 });
 
@@ -615,6 +661,7 @@ Logic.registerSection('tab-form', {
       // Validate fields
       const title = document.getElementById('tab-form-title').value;
       if (!title) titleField.classList.add('error');
+      const url = document.getElementById('tab-form-url').value;
       if (!url) urlField.classList.add('error');
 
       if (title && url) {
@@ -622,6 +669,9 @@ Logic.registerSection('tab-form', {
         Logic.showSection('workspace', { wsId });
       }
     });
+
+    // Focus on title field
+    document.getElementById('tab-form-title').focus();
   }
 });
 

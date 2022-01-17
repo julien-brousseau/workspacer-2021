@@ -58,20 +58,10 @@ export const schema = () => {
         dataType: 'string',
         notNull: false
       },
-      //     discarded: {
-      //       dataType: DATA_TYPE.Boolean,
-      //       notNull: true,
-      //       default: false
-      //     },
-      //     // cookieStoreId: {
-      //     //   dataType: DATA_TYPE.Integer,
-      //     //   notNull: true,
-      //     //   default: false
-      //     // },
-      //     // isInReaderMode: {
-      //     //   dataType: DATA_TYPE.Boolean,
-      //     //   notNull: false
-      //     // },
+      cookieStoreId: {
+        dataType: 'string',
+        notNull: false
+      },
     },
   };
 

@@ -1,9 +1,9 @@
 import { connection } from './jsstore.js';
-
 import { WORKSPACES_TABLE, TABS_TABLE } from './schema.js';
 
 // Returns array of Workspaces, each containing a list of Tabs
-export const fetchAllWorkspaces = async () => {
+export const fetchAllWorkspaces = async (identities = []) => {
+  // TODO: Use kind of JOIN instead of 2 api calls
   const workspaces = await connection.select({
     from: WORKSPACES_TABLE,
   });
@@ -14,7 +14,17 @@ export const fetchAllWorkspaces = async () => {
       { by: 'pinned', type: 'desc' }
     ]
   });
-  return workspaces.map(w => ({ ...w, tabs: tabs.filter(t => t.wsId == w.id) }));
+  
+  return workspaces.map(w => ({ 
+    ...w, 
+    tabs: tabs
+      .filter(t => t.wsId == w.id) 
+      .map(t => {
+        // Get browser container corresponding to tab's cookieStoreId
+        const { cookieStoreId = null, name: cookieStoreName = null } = identities.find(i => i.cookieStoreId === t.cookieStoreId) || {};
+        return { ...t, cookieStoreName, cookieStoreId };
+      })
+  }));
 };
 
 // 
@@ -22,10 +32,7 @@ export const fetchAllTabsFromWorkspace = async wsId => {
   const tabs = await connection.select({
     from: TABS_TABLE,
     where: { wsId },
-    order: {
-      by: 'position',
-      type: 'asc'
-    }
+    order: { by: 'position', type: 'asc' }
   });
   return tabs;
 };

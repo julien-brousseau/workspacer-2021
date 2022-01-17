@@ -23,8 +23,8 @@
     .button:nth-child(5) { margin-left: auto; }
     .button:last-child { margin-right: -5px; }
     
-    &:first-child button.ui.button.move-up, 
-    &:last-child button.ui.button.move-down {
+    &:first-child button.ui.button.move.up, 
+    &:last-child button.ui.button.move.down {
       pointer-events: none !important;
       color: $btn-disabled-color !important;
       background-color: $btn-disabled-background !important;

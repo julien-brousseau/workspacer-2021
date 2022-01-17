@@ -7,7 +7,8 @@
   min-width: 0;
   overflow: hidden;
   background: $item-background;
-
+  transition: $item-transition;
+  
   // Global vertical alignment
   & > *, & > i {
     margin: auto 0px;
@@ -24,13 +25,15 @@
     z-index: 1;
     letter-spacing: 0.2px;
     color: $secondary;
+    transition: $item-transition;
   }
 
   // Button positions and behavior
   .button {
-    visibility: hidden;
+    opacity: 0 !important;
+    transition: 1s all;
 
-    &.pinned { visibility: visible; }
+    // &.pinned { opacity: 1; }
     &:nth-child(3) { margin-left: auto; }
   }
   
@@ -55,6 +58,8 @@
     overflow: visible;
     
     h2 { color: lighten($secondary, 30%); }
-    .button { visibility: visible; }
+    .button { 
+      opacity: 1 !important; 
+    }
   }
 }
