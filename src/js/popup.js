@@ -248,7 +248,7 @@ const Logic = {
   // Export all workspaces and tabs as a JSON file in Downloads folder
   async exportAsJSON () {
     const type = 'text/json;charset=utf-8';
-    const filename = 'workspacer_data_' + new Date().getTime() + '.json';
+    const filename = 'workspacer_data_' + (new Date()).getTime() + '.json';
 
     const json = JSON.stringify({ 
       // Remove tabs from workspaces to preserve consistency with v1 data format
@@ -259,7 +259,7 @@ const Logic = {
     const url = URL.createObjectURL(new Blob([json], { type }));
     if (DEBUG) console.log('Exporting workspaces :>> ', JSON.parse(json));
 
-    this.msg('User data exported!');
+    this.msg('Workspace data has been exported to your Downloads folder');
     return browser.downloads.download({ url, filename });
   },
   // Import previously exported json data (workspaces and tabs) 

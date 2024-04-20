@@ -4,7 +4,7 @@ export const appendElement = (parent, {
     classes = [], 
     text = '', 
     style = null,
-    title = '', 
+    title = null, 
     src = null, 
     type = null, 
     id = null, 
@@ -13,9 +13,6 @@ export const appendElement = (parent, {
     name = null } = {}) => {
 
   const element = document.createElement(tag);
-  element.innerHTML = text; 
-  element.title = title;
-
   element.classList.add(...classes.filter(c => c && c !== ''));
 
   if (id) element.id = id;
@@ -23,7 +20,8 @@ export const appendElement = (parent, {
   if (type) element.type = type;
   if (value) element.value = value;
   if (name) element.name = name;
-
+  if (text) element.innerHTML = text; 
+  if (title)element.title = title;
   if (style) element.style = style;
   if (_for) element.setAttribute('for', _for);
 
