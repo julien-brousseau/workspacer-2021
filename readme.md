@@ -13,8 +13,8 @@ https://addons.mozilla.org/en-CA/firefox/addon/workspacer/
 https://github.com/julien-brousseau/workspacer-2021
 
 ## Development
-Clone repo, then run 'npm install' in the directory to install modules.
-Use the command 'gulp' to automatically compile scss files into css.
+Clone repo, then run `npm i` in the directory root to install dependancies.
+Use the command `npm run build` to compile scss files into css, or `npm run dev` to watch for changes in the scss files and compile them automatically.
 
 ## Changelog
 ### 1.3

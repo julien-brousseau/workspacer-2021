@@ -1,18 +1,15 @@
 {
   "name": "workspacer",
   "version": "1.3.0",
-  "description": "",
-  "main": "popup.html",
-  "scripts": {},
   "author": "Julien Brousseau",
+  "description": "Firefox extension that allows you to save groups of regularly used tabs and open them all at once in browser windows.",
   "license": "ISC",
+  "main": "index.html",
+  "scripts": {
+    "build": "sass src/sass/index.scss src/css/styles.css",
+    "dev": "sass --watch src/sass/index.scss src/css/styles.css"
+  },
   "devDependencies": {
-    "eslint": "^7.17.0",
-    "eslint-plugin-html": "^6.1.2",
-    "gulp": "^4.0.2",
-    "gulp-clean-css": "^4.3.0",
-    "gulp-concat": "^2.6.1",
-    "gulp-sass": "^4.1.0",
-    "node-sass": "^5.0.0"
+    "sass": "^1.75.0"
   }
 }
