@@ -1,9 +1,4 @@
 .tabs {
-  &.pinned .tab {
-    border-left: $secondary solid $tab-left-border-width;
-    padding-left: 0px;
-  }
-
   .tab {
     border-left: 0px none;
     padding-left: $tab-left-border-width;
@@ -22,12 +17,9 @@
     .button:first-child { margin-left: 0; }
     .button:nth-child(5) { margin-left: auto; }
     .button:last-child { margin-right: -5px; }
-    
-    &:first-child button.ui.button.move.up, 
-    &:last-child button.ui.button.move.down {
-      pointer-events: none !important;
-      color: $btn-disabled-color !important;
-      background-color: $btn-disabled-background !important;
-    }
+  }
+
+  &.pinned .pin {
+    opacity: 1 !important;
   }
 }
