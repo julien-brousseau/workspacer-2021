@@ -1,4 +1,5 @@
 import { appendElement, resetElement } from './helpers.js';
+import './lib/sortable.min.js';
 
 // 
 const DEBUG = false;
@@ -157,24 +158,23 @@ const Logic = {
     return ok;
   },
 
-  // Swap tab positions
-  async moveTab (tab, direction) {
-    if (!['up', 'down'].includes(direction)) return console.log('Invalid direction:', direction);
-    
-    const wsTabs = this._currentWorkspace.tabs;
-    const tabIndex = wsTabs.findIndex(t => t.tabId === tab.tabId);
+  // Reorder workspaces positions according to the ids order
+  async reorderWorkspaces (ids) {
+    const workspace = this.workspaces().map(ws => ({ ...ws, position: ids.indexOf(ws.id) + 1 }));
+    await browser.runtime.sendMessage({ type: 'CREATE_OR_EDIT_WORKSPACE', workspace });
+    this.showSection('workspaces');
+  },
 
-    const mod = direction === 'down' ? 1 : -1;
-    const modTabs = [tab, wsTabs[tabIndex + mod]];
-    const positions = modTabs.map(t => t.position).reverse();
-
-    const tabs = modTabs.map((t, i) => ({ ...t, position: positions[i] }));
+  // Reorder tabs positions according to the ids order
+  async reorderTabs (ids) {
+    const tabs = this.currentWorkspace().tabs.map(tab => ({ ...tab, position: ids.indexOf(tab.tabId) + 1 }));
     await browser.runtime.sendMessage({ type: 'CREATE_OR_EDIT_TABS', tabs });
     this.showSection('workspace', { wsId: this._currentWorkspace.id });
   },
+
   // Toggle pinning tab on top section of the list
   async pinTab (tab) {
-    const tabs = [{ ...tab, pinned: !tab.pinned }];
+    const tabs = [{ ...tab, pinned: !tab.pinned, position: 0 }];
     await browser.runtime.sendMessage({ type: 'CREATE_OR_EDIT_TABS', tabs });
     this.showSection('workspace', { wsId: tab.wsId });
   },
@@ -313,10 +313,12 @@ Logic.registerSection('workspaces', {
     // Workspace list
     const fragment = document.createDocumentFragment();
     workspaces.forEach(workspace => {
-      const { id: wsId, title, tabs, icon } = workspace;
+      const { id: wsId, title, tabs, icon, position } = workspace;
 
       // Item container
-      const container = appendElement(fragment, { classes: ['item', 'clickable']});
+      const container = appendElement(fragment, { classes: ['item', 'clickable'], tag: 'li' });
+      container.dataset.id = wsId;
+      container.dataset.position = position;
       container.addEventListener('click', () => Logic.showSection('workspace', { wsId }));
 
       // Favicon (with tab count as :hover title)
@@ -374,8 +376,16 @@ Logic.registerSection('workspaces', {
       });
     }
 
-    document.getElementById('container-workspaces-content').innerHTML = '';
-    document.getElementById('container-workspaces-content').appendChild(fragment);
+    const listContainer = document.getElementById('container-workspaces-content');
+    listContainer.innerHTML = '';
+    listContainer.appendChild(fragment);
+    
+    // Make workspaces sortable if not empty
+    if (workspaces.length) {
+      Sortable.create(listContainer, { 
+        onEnd: e => Logic.reorderWorkspaces([...e.to.childNodes].map(t => parseInt(t.dataset.id)))
+      });
+    }
   }
 });
 
@@ -453,19 +463,21 @@ Logic.registerSection('workspace', {
     });
 
     // Tabs are divided in 2 containers depending on pinned status to simplify sorting
-    const pinnedTabsContainer = appendElement(fragment, { classes: ['tabs', 'pinned']});
-    const tabsContainer = appendElement(fragment, { classes: ['tabs']});
+    const pinnedTabsContainer = appendElement(fragment, { classes: ['tabs', 'pinned'], tag: 'ul' });
+    const tabsContainer = appendElement(fragment, { classes: ['tabs'], tag: 'ul' });
 
     // Tab list
     tabs.forEach(tab => {
-      const { title, url, tabId, favIconUrl: icon, pinned, cookieStoreName } = tab;
+      const { title, url, tabId, favIconUrl: icon, pinned, cookieStoreName, position } = tab;
       // Show tab url/container on html title element
       const desc = url + (cookieStoreName ? '\nContainer: ' + cookieStoreName : '');
 
       const container = appendElement(
         pinned ? pinnedTabsContainer : tabsContainer, 
-        { classes: ['item', 'tab'], title: desc }
+        { classes: ['item', 'tab'], title: desc, tag: 'li' }
       );
+      container.dataset.id = tabId;
+      container.dataset.position = position;
 
       // Append pin button
       appendElement(container, {
@@ -491,22 +503,6 @@ Logic.registerSection('workspace', {
         title: desc
       });
 
-      // Move up
-      appendElement(container, { 
-        tag: 'button',
-        text: '<i class="caret up icon"></i>',
-        classes: ['ui', 'wsBtn', 'icon', 'chain', 'button', 'move', 'up'],
-        title: 'Move up'
-      }).addEventListener('click', () => Logic.moveTab(tab, 'up')); 
-      
-      // Move down
-      appendElement(container, { 
-        tag: 'button',
-        text: '<i class="caret down icon"></i>',
-        classes: ['ui', 'wsBtn', 'icon', 'chain', 'button', 'move', 'down'],
-        title: 'Move down'
-      }).addEventListener('click', () => Logic.moveTab(tab, 'down')); 
-      
       // Open
       appendElement(container, {
         tag: 'button',
@@ -538,8 +534,18 @@ Logic.registerSection('workspace', {
         }); 
     });
 
-    // Empty item
-    if (!tabs.length) appendElement(fragment, {
+    // Make tabs sortable if not empty
+    if (tabs.length) {
+      Sortable.create(tabsContainer, { 
+        onEnd: e => Logic.reorderTabs([...e.to.childNodes].map(t => parseInt(t.dataset.id)))
+      });
+      Sortable.create(pinnedTabsContainer, { 
+        onEnd: e => Logic.reorderTabs([...e.to.childNodes].map(t => parseInt(t.dataset.id)))
+      });
+    }
+    
+    // Otherwise show empty item
+    else appendElement(fragment, {
       classes: ['item', 'empty'],
       text: 'This workspace contains no tabs'
     });

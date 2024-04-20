@@ -6,6 +6,9 @@ export const fetchAllWorkspaces = async (identities = []) => {
   // TODO: Use kind of JOIN instead of 2 api calls
   const workspaces = await connection.select({
     from: WORKSPACES_TABLE,
+    order: [
+      { by: 'position', type: 'asc' }
+    ]
   });
   const tabs = await connection.select({
     from: TABS_TABLE,

@@ -21,6 +21,12 @@ body {
   color: $secondary;
 }
 
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
 .container { 
   position: absolute;
   width: 100%; 

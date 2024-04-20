@@ -23,6 +23,10 @@ export const schema = () => {
         notNull: true,
         default: 'circle'
       },
+      position: {
+        dataType: 'number',
+        // notNull: true
+      },
     },
   };
   const tabs_table = {
