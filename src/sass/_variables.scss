@@ -3,17 +3,17 @@ $app-height: 550px;
 $app-scrollbar-width: 20px;
 
 $primary: #00aeff;
-$secondary: #1f2730;
+$secondary: #18181b;
 $danger: #b91111;
 
 // App header
-$header-background-color1: rgba(30, 36, 43, 1);
+$header-background-color1: #2b2a33;
 $header-background-color2: $secondary;
 $header-height: 50px;
 $header-color: #CCC;
 $header-title-size: 16px;
 $header-border-color: $secondary;
-$header-background: linear-gradient(180deg, $header-background-color1 0%, $header-background-color2 100%);
+$header-background: linear-gradient(180deg, $header-background-color1 85%, $header-background-color2 100%);
 
 // Item
 $item-height: 36px;
