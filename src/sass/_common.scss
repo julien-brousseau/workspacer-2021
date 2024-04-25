@@ -35,6 +35,17 @@ ul {
   z-index: 5;
 
   &.hide { opacity: 0 !important; z-index: 1; }
+
+  // Messy display management for single/multi workspace mode
+  .add-single, .refresh-single { display: none !important; }
+  &.single {
+    .add-regular { display: none !important; }
+    .add-single, .refresh-single { display: revert !important; }
+    &.empty {
+      .add-single { display: revert !important; }
+      .refresh-single { display: none !important; }
+    }
+  }
 }
 
 .form {

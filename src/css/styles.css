@@ -37,6 +37,21 @@ ul {
   opacity: 0 !important;
   z-index: 1;
 }
+.container .add-single, .container .refresh-single {
+  display: none !important;
+}
+.container.single .add-regular {
+  display: none !important;
+}
+.container.single .add-single, .container.single .refresh-single {
+  display: revert !important;
+}
+.container.single.empty .add-single {
+  display: revert !important;
+}
+.container.single.empty .refresh-single {
+  display: none !important;
+}
 
 .form {
   padding: 15px;
@@ -273,6 +288,10 @@ ul {
 }
 .item.sortable-chosen {
   border: 1px solid #18181b;
+}
+.item.disabled {
+  opacity: 0.2;
+  pointer-events: none !important;
 }
 
 .tabs .tab {

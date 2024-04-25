@@ -29,7 +29,7 @@
           WORKSPACE
         </h1>
         <!-- Controls -->
-        <button class="ui wsBtn icon dropdown button" title="Add tabs to this workspace">
+        <button class="ui wsBtn icon dropdown button add-regular" title="Add tabs to this workspace">
           <i class="plus icon"></i>
           <div class="menu">
             <div class="item" id="workspace-add-current-tab-button" title="Add current tab to workspace">Current tab</div>
@@ -37,6 +37,9 @@
             <div class="item" id="workspace-replace-tabs-button" title="Replace all tabs with current window">Replace all tabs</div>
           </div>
         </button>
+        
+        <button class="ui wsBtn icon dropdown button refresh-single" title="Replace tab"><i class="refresh icon"></i></button>
+        <button class="ui wsBtn icon dropdown button add-single" title="Save tab"><i class="plus icon"></i></button>
         
         <button class="ui wsBtn icon dropdown button" title="Open all tabs from this workspace">
           <i class="window restore icon"></i>
@@ -49,7 +52,7 @@
         <button class="ui wsBtn icon dropdown button" title="More actions">
           <i class="bars icon"></i>
           <div class="menu">
-            <div class="item" id="workspace-rename-button" title="Change current workspace's name">Rename workspace</div>
+            <div class="item" id="workspace-rename-button" title="Change current workspace's name">Workspace settings</div>
             <div class="item" id="workspace-delete-tabs-button" title="Remove all tabs from this workspace">Delete all tabs</div>
             <div class="item" id="workspace-delete-button" title="Delete this workspace and all tabs">Delete workspace</div>
           </div>
@@ -74,6 +77,13 @@
           <div id="workspace-form-icon-field" class="field">
             <label>Icon</label>
             <div id="workspace-form-icons"></div>
+          </div>
+          <div id="workspace-form-single-field" class="single-toggle">
+            <div class="ui toggle checkbox field">
+              <input id="workspace-form-single" name="single" type="checkbox">
+              <label>Single mode</label>
+              <p>Single mode explaination</p>
+            </div>
           </div>
           <button id="workspace-submit-button" class="ui secondary button" type="submit" title="Save">Create</button>
         </form>

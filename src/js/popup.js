@@ -313,10 +313,10 @@ Logic.registerSection('workspaces', {
     // Workspace list
     const fragment = document.createDocumentFragment();
     workspaces.forEach(workspace => {
-      const { id: wsId, title, tabs, icon, position } = workspace;
+      const { id: wsId, title, tabs, icon, position, single } = workspace;
 
       // Item container
-      const container = appendElement(fragment, { classes: ['item', 'clickable'], tag: 'li' });
+      const container = appendElement(fragment, { classes: ['item', 'clickable', single ? 'single' : ''], tag: 'li' });
       container.dataset.id = wsId;
       container.dataset.position = position;
       container.addEventListener('click', () => Logic.showSection('workspace', { wsId }));
@@ -396,7 +396,7 @@ Logic.registerSection('workspace', {
   },
   async render () {
     const workspace = Logic.currentWorkspace();
-    const { id: wsId, title, tabs, icon } = workspace;
+    const { id: wsId, title, tabs, icon, single } = workspace;
     if (DEBUG) console.log('Current workspace :>> ', workspace);
 
     // Title
@@ -407,6 +407,9 @@ Logic.registerSection('workspace', {
     const i = document.getElementById('workspace-title-icon');
     i.classList.remove(...i.classList);
     i.classList.add(...icon.split('-'), 'feature', 'icon');
+
+    document.getElementById('container-workspace').classList.toggle('single', single);
+    document.getElementById('container-workspace').classList.toggle('empty', !tabs.length);
 
     // Static buttons
     resetElement('workspace-add-current-tab-button');
@@ -564,7 +567,7 @@ Logic.registerSection('workspace-form', {
   },
   async render () {
     const workspace = Logic.currentWorkspace() || {};
-    const { id, title } = workspace;
+    const { id, title, single } = workspace;
     const icons = ['headphones', 'rss', 'book', 'certificate', 'calendar alternate outline', 'chart bar outline', 
       'compass', 'folder outline', 'pencil alternate', 'tag', 'shield alternate', 'comments', 'paper plane', 'server', 
       'tv', 'dollar sign', 'eye slash outline', 'tint', 'file outline', 'heart outline', 'calculator', 'cloud', 'flag outline', 'user outline'];
@@ -574,6 +577,10 @@ Logic.registerSection('workspace-form', {
     
     // Workspace title field
     document.getElementById('workspace-form-title').value = id ? title : '';
+
+    // Single field
+    document.getElementById('workspace-form-single-field').style.display = id ? 'none' : 'block'; // Single status cant be changed after creation
+    document.getElementById('workspace-form-single').checked = !!single;
 
     // Workspace icon-picker field
     const iconList = document.getElementById('workspace-form-icons');
@@ -621,8 +628,10 @@ Logic.registerSection('workspace-form', {
       if (!icons.length) iconField.classList.add('error');
       const icon = icons.length ? icons[0].value : false;
 
+      const single = document.getElementById('workspace-form-single').checked;
+
       if (title && icon) {
-        const id = await Logic.submitWorkspace({ ...workspace, title, icon });
+        const id = await Logic.submitWorkspace({ ...workspace, title, icon, single });
         if (id) Logic.showSection('workspace', { wsId: id });
         else Logic.showSection('workspaces');
       }

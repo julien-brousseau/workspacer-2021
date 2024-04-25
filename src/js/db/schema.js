@@ -16,7 +16,6 @@ export const schema = () => {
       },
       description: {
         dataType: 'string',
-        // notNull: true
       },
       icon: {
         dataType: 'string',
@@ -25,7 +24,10 @@ export const schema = () => {
       },
       position: {
         dataType: 'number',
-        // notNull: true
+      },
+      single: {
+        dataType: 'boolean',
+        default: false
       },
     },
   };
