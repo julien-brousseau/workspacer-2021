@@ -27,6 +27,12 @@
     "browser_style": true,
     "default_icon": { "48": "/icons/48.svg" }
   },
+
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "extension@brousseau.tech"
+    }
+  },
   
   "content_security_policy": "script-src 'self' ; object-src 'self'"
 }
