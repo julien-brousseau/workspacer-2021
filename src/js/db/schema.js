@@ -61,10 +61,6 @@ export const schema = () => {
         notNull: true,
         default: false
       },
-      favIconUrl: {
-        dataType: 'string',
-        notNull: false
-      },
       cookieStoreId: {
         dataType: 'string',
         notNull: false

@@ -90,7 +90,7 @@ async function fetchAllTabsFromWindow () {
 
 // Filter out un-necessary props from a browser's tab object
 function filterRawTab (tab) {
-  const props = ['title', 'url', 'pinned', 'discarded', 'favIconUrl', 'cookieStoreId'];
+  const props = ['title', 'url', 'pinned', 'discarded', 'cookieStoreId'];
   return props.reduce((filteredProps, prop) => ({ ...filteredProps, [prop]: tab[prop] }), {});
 }
 
@@ -115,7 +115,7 @@ async function openTabsInWindow (tabs, currentWindow = false) {
 async function createTabs (windowId, tabs) {
   // Props to remove from tab object to prevent browser rejection
   // Note: Although cookieStoreId can used, it's safer to add it manually after browser check
-  const conflictingProps = ['tabId', 'position', 'wsId', 'favIconUrl', 'cookieStoreId', 'cookieStoreName'];
+  const conflictingProps = ['tabId', 'position', 'wsId', 'cookieStoreId', 'cookieStoreName'];
 
   // Fetch all of browser's containers ids
   const identities = await fetchBrowserContainers(true);

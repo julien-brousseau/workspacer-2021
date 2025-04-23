@@ -118,9 +118,8 @@ const Logic = {
     // DOM list helper
     const list = (tabs) => '<ul>' + tabs
       .map(t => {
-        const i = t.icon ? '<i class="icon ' + t.icon + '"></i>' 
-          : t.favIconUrl ? '<img src="' + t.favIconUrl + '">'
-          : '<div style="width: 22px;"></div>';
+        const { origin } = new URL(t.url);
+        const i = '<img src="' + origin + '/favicon.ico"'
         return '<li>' + i + t.title.slice(0, 45) + '</li>';
       })
       .join('') + '</ul>';
@@ -321,7 +320,7 @@ Logic.registerSection('workspaces', {
       container.dataset.position = position;
       container.addEventListener('click', () => Logic.showSection('workspace', { wsId }));
 
-      // Favicon (with tab count as :hover title)
+      // Workspace icon (with tab count as :hover title)
       const nbTabs = tabs.length;
       appendElement(container, { 
         tag: 'i', 
@@ -468,7 +467,7 @@ Logic.registerSection('workspace', {
 
     // Tab list
     tabs.forEach(tab => {
-      const { title, url, tabId, favIconUrl: icon, pinned, cookieStoreName, position } = tab;
+      const { title, url, tabId, pinned, cookieStoreName, position } = tab;
       // Show tab url/container on html title element
       const desc = url + (cookieStoreName ? '\nContainer: ' + cookieStoreName : '');
 
@@ -487,12 +486,13 @@ Logic.registerSection('workspace', {
         title: pinned ? 'Unpin tab' : 'Pin tab'
       }).addEventListener('click', () => Logic.pinTab(tab)); 
 
-      // Append favicon image or placeholder
+      // Fetch favicon with guessed url
+      const { origin } = new URL(tab.url) ;
       appendElement(container, { 
-        tag: icon ? 'img' : 'div',
-        classes: ['favIcon', !icon ? 'empty' : ''],
-        src: icon ? icon : null,
-        title: desc
+        tag: 'img',
+        classes: ['favIcon'],
+        src: origin + '/favicon.ico',
+        title: origin,
       });
 
       // Append title
