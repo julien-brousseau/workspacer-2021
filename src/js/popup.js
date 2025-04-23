@@ -720,8 +720,17 @@ Logic.registerSection('confirm', {
   }
 });
 
-// Default section
-Logic.showSection('workspaces');
+(async function init () {
+  // console.log('INIT');
+  
+  await browser.runtime.sendMessage({ type: 'SYNC' });
+  // console.log('SYNCED FROM FRONTEND');
+
+  // Load default section
+  Logic.showSection('workspaces');
+  console.log('LOAD COMPLETE');
+  
+})();
 
 // eslint-disable-next-line no-undef
 $('.ui.dropdown').dropdown();

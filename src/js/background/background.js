@@ -59,6 +59,10 @@ async function handleMessageFromBackground (action) {
     const browserTabs = await browser.tabs.query({});
     await browser.tabs.update(browserTabs.at(-1).id, { active: true });
     
+  } else if (action.type === 'SYNC') {
+    await sync();
+    return;
+    
   } else {
     console.log('ACTION NOT FOUND');
   }
@@ -156,4 +160,19 @@ async function fetchBrowserContainers (idOnly = false) {
     console.log('Browser identities unavailable');
     return []; 
   }
+}
+
+//
+async function sync () {
+  let syncData = await browser.storage.sync.get();
+  if (!Object.entries(syncData).length) {
+    const identities = await fetchBrowserContainers();
+    const workspaces = await db.fetchAllWorkspaces(identities);
+
+    await browser.storage.sync.set({ workspaces });
+    syncData = await browser.storage.sync.get();
+  }
+
+  console.log('SYNC COMPLETE', syncData)
+  return syncData;
 }
